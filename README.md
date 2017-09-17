@@ -1,4 +1,9 @@
+# Jeu POO
 
-# jeuPOO
+### Pré-requis
+Ce projet doit être installé sur un serveur local.
 
-Requires 'phaser-ce' in node_modules
+### Installation
+```sh
+$ npm install
+```
