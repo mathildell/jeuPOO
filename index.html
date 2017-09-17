@@ -1,12 +1,31 @@
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>JSGame</title>
-</head>
-<body>
-    <script src="app.js"></script>
-</body>
-</html>
+<!doctype html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <title>hello phaser</title>
+        <script src="node_modules/phaser-ce/build/phaser.min.js"></script>
+    </head>
+    <body>
 
+    <script type="text/javascript">
+
+        "use strict";
+
+        window.onload = function() {
+            var game = new Phaser.Game(800, 600, Phaser.AUTO, '', { preload: preload, create: create });
+
+            function preload () {
+                game.load.image('logo', 'phaser.png');
+            }
+
+            function create () {
+                var logo = game.add.sprite(game.world.centerX, game.world.centerY, 'logo');
+                logo.anchor.setTo(0.5, 0.5);
+            }
+        };
+
+    </script>
+
+    </body>
+</html>
