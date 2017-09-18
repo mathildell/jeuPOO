@@ -1,1 +1,5 @@
+
 poubelle/
+.idea/
+local/
+node_modules/
