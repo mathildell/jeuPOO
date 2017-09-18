@@ -1,0 +1,20 @@
+{
+  "name": "jvpoo",
+  "version": "0.0.1",
+  "description": "",
+  "author": "Author <author@example.org>",
+  "main": "lib/foo.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mathildell/jeuPOO.git"
+  },
+  "dependencies": {
+    "phaser": "*"
+  },
+  "devDependencies": {
+  },
+  "preferGlobal": true,
+  "private": true,
+  "license": "MIT"
+}
+  
