@@ -42,7 +42,7 @@ level = {
 ## 2. Editor mode
 
 > The **editor mode** must :
-
+>
 > - Visualize assets and a scene
 > - Proposes a user interface to edit the JSONlevel conveniently
 > - [Optional] Allows to use custom assets (images, sounds)
