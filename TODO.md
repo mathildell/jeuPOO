@@ -3,7 +3,7 @@ Here are the tasks needed, in chronological order
 
 ---
 
-##1. Play mode
+## 1. Play mode
 
 >The **play mode** must load a level with a JSON object (called **JSONlevel**) :
 1. Parse the JSON to get game functions : preload, create, update, ...
@@ -12,8 +12,8 @@ Here are the tasks needed, in chronological order
 The first step is to create a basic model of the JSONlevel and load it. Here is an example of his structure :
 
 ```
-level {
-    assets { // describe models that can be used several times
+level = {
+    assets = { // describe models that can be used several times
         sprites[],
         sounds[],
         images[],
@@ -23,12 +23,12 @@ level {
         ennemies[], // has behavior / IA
         // ...
     },
-    scene {
-        camera {
+    scene = {
+        camera = {
             mode, // centered on players, static, scroll, ect
-            shift {x, y}
-        }
-        grid {
+            shift = {x, y}
+        },
+        grid = {
             width,
             height,
             decor[] // image / animation and specify collision
@@ -39,10 +39,10 @@ level {
 ```
 
 
-##2. Editor mode
+## 2. Editor mode
 
 > The **editor mode** must :
-
+>
 > - Visualize assets and a scene
 > - Proposes a user interface to edit the JSONlevel conveniently
 > - [Optional] Allows to use custom assets (images, sounds)
@@ -50,7 +50,7 @@ level {
 The goal of this step is to have an editor which can recreates the JSONlevel used for the step one.
 
 
-##3. Increment
+## 3. Increment
 
 There are several ways of improving the project :
 
