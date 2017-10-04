@@ -4,28 +4,9 @@
     <head>
         <meta charset="UTF-8" />
         <title>hello phaser</title>
-        <script src="node_modules/phaser-ce/build/phaser.min.js"></script>
     </head>
     <body>
-
-    <script type="text/javascript">
-
-        "use strict";
-
-        window.onload = function() {
-            var game = new Phaser.Game(400, 300, Phaser.AUTO, '', { preload: preload, create: create });
-
-            function preload () {
-                game.load.image('logo', 'assets/phaser.png');
-            }
-
-            function create () {
-                var logo = game.add.sprite(game.world.centerX, game.world.centerY, 'logo');
-                logo.anchor.setTo(0.5, 0.5);
-            }
-        };
-
-    </script>
-
+        <script src="node_modules/phaser-ce/build/phaser.min.js" type="text/javascript"></script>
+        <script src="src/app.js" type="text/javascript"></script>
     </body>
 </html>
