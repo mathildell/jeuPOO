@@ -9,7 +9,8 @@
     "url": "https://github.com/mathildell/jeuPOO.git"
   },
   "dependencies": {
-    "phaser-ce": "*"
+    "phaser-ce": "*",
+    "requirejs": "*"
   },
   "devDependencies": {
   },

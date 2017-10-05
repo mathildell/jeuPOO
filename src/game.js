@@ -1,80 +1,47 @@
 
-// import * as Phaser from "phaser-ce"; // Import not accepted in html, how to make it work ?
-
-
-// Enums which can be selected later in editor
-
-const actionsEnum = Object.freeze({
-    moveLeft:  Symbol('moveLeft'),
-    moveRight: Symbol('moveRight'),
-    jump:      Symbol('jump')
-});
-
-const keysEnum = Object.freeze({ // Another way to not bind every key ? Look at player creation & input handling
-    left:  Symbol('left'),
-    right: Symbol('right'),
-    up:    Symbol('up'),
-    down:  Symbol('down'),
-    a:     Symbol('a'),
-    z:     Symbol('z'),
-    // ...
-});
+"use strict";
 
 // The JSON level object
 
-const JSONLevel = {
-    resources: {
-        images: [
-            {name: 'hero',   asset: 'assets/hero.png'},
-            {name: 'ground', asset: 'assets/bricks.png'}
-        ],
-        players: [
-            {name: 'hero', image: 'hero', inputs: [
-                {key: keysEnum.left,  action:
-                    {type: actionsEnum.moveLeft,  speed: 200}},
-                {key: keysEnum.right, action:
-                    {type: actionsEnum.moveRight, speed: 200}},
-                {key: keysEnum.up,    action:
-                    {type: actionsEnum.jump, power: 900}}
-            ]}
-        ]
-    },
-    scene: {
-        settings: {
-            gravity: 800
-        },
-        grid: {
-            size: 128,
-            width: 10,
-            height: 7,
-            decor: [
-                {x: 0, y: 0, image: 'ground', hasBody: true},
-                {x: 1, y: 0, image: 'ground', hasBody: true},
-                {x: 2, y: 0, image: 'ground', hasBody: true},
-                {x: 3, y: 0, image: 'ground', hasBody: true},
-                {x: 4, y: 0, image: 'ground', hasBody: true},
-                {x: 3, y: 3, image: 'ground', hasBody: true},
-                {x: 4, y: 3, image: 'ground', hasBody: true},
-                {x: 5, y: 3, image: 'ground', hasBody: true},
-            ]
-        },
-        actors: [
-            {x: 1, y: 4, type: 'player', name: 'hero'}
-        ]
-    }
-};
+const level = new JSONLevel('sandbox');
+
+level.resources.images.push({name: 'hero',   asset: 'assets/hero.png'});
+level.resources.images.push({name: 'ground', asset: 'assets/bricks.png'});
+
+level.resources.players.push({name: 'hero', image: 'hero', inputs: [
+    {key: keysEnum.left,  action: {type: actionsEnum.moveLeft,  speed: 200}},
+    {key: keysEnum.right, action: {type: actionsEnum.moveRight, speed: 200}},
+    {key: keysEnum.up,    action: {type: actionsEnum.jump, power: 900}}
+]});
+
+level.scene.settings.gravity = 800;
+
+level.scene.grid.size = 128;
+level.scene.grid.width = 10;
+level.scene.grid.height = 7;
+level.scene.grid.decor.push({x: 0, y: 0, image: 'ground', hasBody: true});
+level.scene.grid.decor.push({x: 1, y: 0, image: 'ground', hasBody: true});
+level.scene.grid.decor.push({x: 2, y: 0, image: 'ground', hasBody: true});
+level.scene.grid.decor.push({x: 3, y: 0, image: 'ground', hasBody: true});
+level.scene.grid.decor.push({x: 4, y: 0, image: 'ground', hasBody: true});
+level.scene.grid.decor.push({x: 3, y: 3, image: 'ground', hasBody: true});
+level.scene.grid.decor.push({x: 4, y: 3, image: 'ground', hasBody: true});
+level.scene.grid.decor.push({x: 5, y: 3, image: 'ground', hasBody: true});
+
+level.scene.actors.push({x: 1, y: 4, type: 'player', name: 'hero'});
+
 
 window.onload = function() {
 
     const game = new Phaser.Game(
-        JSONLevel.scene.grid.size * JSONLevel.scene.grid.width,
-        JSONLevel.scene.grid.size * JSONLevel.scene.grid.height,
+        level.scene.grid.size * level.scene.grid.width,
+        level.scene.grid.size * level.scene.grid.height,
         Phaser.AUTO,
         '',
         {preload: preload, create: create, update: update});
 
     function preload () {
-        for (let image of JSONLevel.resources.images) {
+        for (let image of level.resources.images) {
             game.load.image(image.name, image.asset);
         }
     }
@@ -120,9 +87,9 @@ window.onload = function() {
 
         decors = game.add.group();
 
-        const gridSize = JSONLevel.scene.grid.size;
-        const gridHeight = JSONLevel.scene.grid.height;
-        for (let decor of JSONLevel.scene.grid.decor) {
+        const gridSize = level.scene.grid.size;
+        const gridHeight = level.scene.grid.height;
+        for (let decor of level.scene.grid.decor) {
             if (decor.hasBody) {
                 const platform = platforms.create(
                     gridSize * decor.x,
@@ -140,11 +107,10 @@ window.onload = function() {
 
         // Players
 
-        for (let actor of JSONLevel.scene.actors) {
+        for (let actor of level.scene.actors) {
             if (actor.type === 'player') {
-                const playerAsset = JSONLevel.resources.players.find(function(asset) {
-                    return asset.name === actor.name;
-                });
+                const playerAsset = level.resources.players.find(
+                    (asset) => asset.name === actor.name);
 
                 const player = game.add.sprite(
                     gridSize * actor.x,
@@ -152,7 +118,7 @@ window.onload = function() {
                     playerAsset.image);
 
                 game.physics.arcade.enable(player);
-                player.body.gravity.y = JSONLevel.scene.settings.gravity;
+                player.body.gravity.y = level.scene.settings.gravity;
                 player.body.collideWorldBounds = true;
 
                 // Inputs

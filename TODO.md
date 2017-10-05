@@ -5,11 +5,11 @@ Here are the tasks needed, in chronological order
 
 ## 1. Play mode
 
->The **play mode** must load a level with a JSON object (called **JSONlevel**) :
+>The **play mode** must load a level with a JSON object (called **JSONLevel**) :
 1. Parse the JSON to get game functions : preload, create, update, ...
 2. Create the Phaser.Game object.
 
-The first step is to create a basic model of the JSONlevel and load it. Here is an example of his structure :
+The first step is to create a basic model of the JSONLevel and load it. Here is an example of his structure :
 
 ```
 level = {
@@ -56,13 +56,13 @@ There are several ways of improving the project :
 
 - Improve the editor :
   - Import & export assets
-  - More options to customize the JSONlevel
+  - More options to customize the JSONLevel
   - Refactor the user interface
 - Create more assets :
   - Sprites & animations
   - Sounds
   - Default entities, players, ennemies
-  - Some JSONlevels
+  - Some JSONLevels
 - Add functionalities to the engine, usable by the editor :
   - Bevahiors : seek for player, flee, ...
   - Skills : jump, attack, fire bullet, ...
