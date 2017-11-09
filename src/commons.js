@@ -9,7 +9,7 @@ const actionsEnum = Object.freeze({
     jump:      Symbol('jump')
 });
 
-const keysEnum = Object.freeze({ // Another way to not bind every key ?
+const keysEnum = Object.freeze({ // TODO Another way to not bind every key ?
     left:  Symbol('left'),
     right: Symbol('right'),
     up:    Symbol('up'),
@@ -19,12 +19,21 @@ const keysEnum = Object.freeze({ // Another way to not bind every key ?
     // ...
 });
 
+const animationsEnum = Object.freeze({
+    birth: Symbol('birth'),
+    death: Symbol('death'),
+    idle:  Symbol('idle'),
+    run:   Symbol('run'),
+    fall:  Symbol('fall'),
+    hurt:  Symbol('hurt')
+});
+
 class JSONLevel {
 
     constructor(name) {
         this.resources = {
-                images: [],
-                players: []
+            images: [],
+            entities: []
         };
         this.scene = {
             settings: {

@@ -14,7 +14,7 @@ level.resources.players.push({name: 'hero', image: 'hero', inputs: [
     {key: keysEnum.up,    action: {type: actionsEnum.jump, power: 900}}
 ]});
 
-level.scene.settings.gravity = 800;
+level.scene.settings.gravity = 1000;
 
 level.scene.grid.size = 128;
 level.scene.grid.width = 10;
