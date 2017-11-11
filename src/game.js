@@ -33,7 +33,7 @@ level.scene.actors.push({x: 1, y: 4, type: 'player', name: 'hero'});
 
 window.onload = function() {
 
-    const game = new Phaser.Game(
+    game = new Phaser.Game(
         level.scene.grid.size * level.scene.grid.width,
         level.scene.grid.size * level.scene.grid.height,
         Phaser.AUTO,
@@ -153,6 +153,7 @@ window.onload = function() {
     }
 
     function update() {
+        const delta = game.time.physicsElapsed;
         for (let player of players) {
             game.physics.arcade.collide(player, platforms);
         }
