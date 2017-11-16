@@ -1,5 +1,9 @@
 $(function(){
 
+  // Load available resources in "editor json level"
+  // Welcome menu : load / create level
+  // Editor
+
   //load grid
   // for 70 / 70
   var squareGrid = 70;
@@ -7,6 +11,7 @@ $(function(){
     var gW = $('#grid').width();
     var gH = $('#grid').height();
 
+<<<<<<< HEAD
     var ratioW = Math.ceil(gW/squareGrid); /*round up*/
     var ratioH = Math.ceil(gH/squareGrid);
 
@@ -67,3 +72,5 @@ $(function(){
 
 
 });
+
+
