@@ -4,11 +4,110 @@
     <head>
         <meta charset="UTF-8" />
         <title>hello phaser</title>
+        <link rel="stylesheet" href="assets/css/editor.css">
+        <link rel="stylesheet" href="http://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
     </head>
     <body>
-        <script src="node_modules/phaser-ce/build/phaser.min.js" type="text/javascript"></script>
-        <!--<script src="node_modules/requirejs/require.js" type="text/javascript"></script>
+
+            
+        <!-- 
+           General nav
         -->
+        <nav>
+            <ul>
+                <li>
+                    <a href="#" class="ion-android-home"></a>
+                    Home screen
+                </li>
+                <li id="toggle_sound">
+                    <span class="ion-ios-volume-low"></span> 
+                    Music on/off 
+                </li>
+                <li id="export">
+                    <span class="ion-code-download"></span> 
+                    Export 
+                </li>
+            </ul>
+        </nav>
+        <!-- 
+            Containeur of the whole editor
+        -->
+        <main id="container">
+            <!-- 
+               Grid
+            -->
+            <div id="grid">
+            </div>
+
+            <!-- 
+                Where the options are
+            -->
+            <aside>
+                <button id="toggle_aside">close</button>
+
+                <!-- 
+                    Options per cartegories
+                -->
+                <section>
+                    <!-- 
+                        Open category
+                    -->
+                    <button class="toggle_section">
+                        X
+                    </button>
+                    <!-- 
+                        Content
+                    -->
+                    <article>
+                        <p>
+                            <b><label for="#">Label</label></b>
+                            <input type="text" name="#" id="">
+                        </p>
+                        <p>
+                            <b><label for="#">Label</label></b>
+                            <input type="text" name="#" id="" class="with_value">
+                            <span>px</span>
+                        </p>
+                        <p>
+                            <b>Main label</b>
+                            <input type="checkbox" name="cbx" value="0"> <label for="#">Label #1</label>
+                            <input type="checkbox" name="cbx" value="1"> <label for="#">Label #2</label>
+                            <input type="checkbox" name="cbx" value="2"> <label for="#">Label #3</label>
+                            <input type="checkbox" name="cbx" value="3"> <label for="#">Label #4</label>
+                            <input type="checkbox" name="cbx" value="4"> <label for="#">Label #5</label>
+                        </p>
+                        <p>
+                            <b>Label</b>
+                            <select name="#" id="">
+                                <option value="0">Value #1</option>
+                                <option value="1">Value #2</option>
+                                <option value="2">Value #3</option>
+                                <option value="3">Value #4</option>
+                            </select>
+                        </p>
+                        <p>
+                            <b>Main label</b>
+                            <input type="radio" name="cbx" value="0"> <label for="#">Label #1</label>
+                            <input type="radio" name="cbx" value="1"> <label for="#">Label #2</label>
+                            <input type="radio" name="cbx" value="2"> <label for="#">Label #3</label>
+                            <input type="radio" name="cbx" value="3"> <label for="#">Label #4</label>
+                            <input type="radio" name="cbx" value="4"> <label for="#">Label #5</label>
+                        </p>
+
+
+                    </article>
+                </section>
+
+                <section> <button class="toggle_section"> X </button> <article><p> <b><label for="#">Label</label></b> <input type="text" name="#" id=""></p><p> <b><label for="#">Label</label></b> <input type="text" name="#" id="" class="with_value"> <span>px</span></p><p> <b>Main label</b> <input type="checkbox" name="cbx" value="0"> <label for="#">Label #1</label> <input type="checkbox" name="cbx" value="1"> <label for="#">Label #2</label> <input type="checkbox" name="cbx" value="2"> <label for="#">Label #3</label> <input type="checkbox" name="cbx" value="3"> <label for="#">Label #4</label> <input type="checkbox" name="cbx" value="4"> <label for="#">Label #5</label></p><p> <b>Label</b> <select name="#" id=""><option value="0">Value #1</option><option value="1">Value #2</option><option value="2">Value #3</option><option value="3">Value #4</option> </select></p><p> <b>Main label</b> <input type="radio" name="cbx" value="0"> <label for="#">Label #1</label> <input type="radio" name="cbx" value="1"> <label for="#">Label #2</label> <input type="radio" name="cbx" value="2"> <label for="#">Label #3</label> <input type="radio" name="cbx" value="3"> <label for="#">Label #4</label> <input type="radio" name="cbx" value="4"> <label for="#">Label #5</label></p></article> </section><section> <button class="toggle_section"> X </button> <article><p> <b><label for="#">Label</label></b> <input type="text" name="#" id=""></p><p> <b><label for="#">Label</label></b> <input type="text" name="#" id="" class="with_value"> <span>px</span></p><p> <b>Main label</b> <input type="checkbox" name="cbx" value="0"> <label for="#">Label #1</label> <input type="checkbox" name="cbx" value="1"> <label for="#">Label #2</label> <input type="checkbox" name="cbx" value="2"> <label for="#">Label #3</label> <input type="checkbox" name="cbx" value="3"> <label for="#">Label #4</label> <input type="checkbox" name="cbx" value="4"> <label for="#">Label #5</label></p><p> <b>Label</b> <select name="#" id=""><option value="0">Value #1</option><option value="1">Value #2</option><option value="2">Value #3</option><option value="3">Value #4</option> </select></p><p> <b>Main label</b> <input type="radio" name="cbx" value="0"> <label for="#">Label #1</label> <input type="radio" name="cbx" value="1"> <label for="#">Label #2</label> <input type="radio" name="cbx" value="2"> <label for="#">Label #3</label> <input type="radio" name="cbx" value="3"> <label for="#">Label #4</label> <input type="radio" name="cbx" value="4"> <label for="#">Label #5</label></p></article> </section><section> <button class="toggle_section"> X </button> <article><p> <b><label for="#">Label</label></b> <input type="text" name="#" id=""></p><p> <b><label for="#">Label</label></b> <input type="text" name="#" id="" class="with_value"> <span>px</span></p><p> <b>Main label</b> <input type="checkbox" name="cbx" value="0"> <label for="#">Label #1</label> <input type="checkbox" name="cbx" value="1"> <label for="#">Label #2</label> <input type="checkbox" name="cbx" value="2"> <label for="#">Label #3</label> <input type="checkbox" name="cbx" value="3"> <label for="#">Label #4</label> <input type="checkbox" name="cbx" value="4"> <label for="#">Label #5</label></p><p> <b>Label</b> <select name="#" id=""><option value="0">Value #1</option><option value="1">Value #2</option><option value="2">Value #3</option><option value="3">Value #4</option> </select></p><p> <b>Main label</b> <input type="radio" name="cbx" value="0"> <label for="#">Label #1</label> <input type="radio" name="cbx" value="1"> <label for="#">Label #2</label> <input type="radio" name="cbx" value="2"> <label for="#">Label #3</label> <input type="radio" name="cbx" value="3"> <label for="#">Label #4</label> <input type="radio" name="cbx" value="4"> <label for="#">Label #5</label></p></article> </section><section> <button class="toggle_section"> X </button> <article><p> <b><label for="#">Label</label></b> <input type="text" name="#" id=""></p><p> <b><label for="#">Label</label></b> <input type="text" name="#" id="" class="with_value"> <span>px</span></p><p> <b>Main label</b> <input type="checkbox" name="cbx" value="0"> <label for="#">Label #1</label> <input type="checkbox" name="cbx" value="1"> <label for="#">Label #2</label> <input type="checkbox" name="cbx" value="2"> <label for="#">Label #3</label> <input type="checkbox" name="cbx" value="3"> <label for="#">Label #4</label> <input type="checkbox" name="cbx" value="4"> <label for="#">Label #5</label></p><p> <b>Label</b> <select name="#" id=""><option value="0">Value #1</option><option value="1">Value #2</option><option value="2">Value #3</option><option value="3">Value #4</option> </select></p><p> <b>Main label</b> <input type="radio" name="cbx" value="0"> <label for="#">Label #1</label> <input type="radio" name="cbx" value="1"> <label for="#">Label #2</label> <input type="radio" name="cbx" value="2"> <label for="#">Label #3</label> <input type="radio" name="cbx" value="3"> <label for="#">Label #4</label> <input type="radio" name="cbx" value="4"> <label for="#">Label #5</label></p></article> </section>
+
+
+            </aside>
+
+
+        </main>
+
+        <script src="node_modules/phaser-ce/build/phaser.min.js" type="text/javascript"></script>
+        <script src="node_modules/jquery/dist/jquery.min.js" type="text/javascript"></script>
         <script src="src/commons.js" type="text/javascript"></script>
         <script src="src/editor.js" type="text/javascript"></script>
     </body>
