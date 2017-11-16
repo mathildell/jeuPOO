@@ -10,7 +10,6 @@ $(function(){
   function generateGrid(squareGrid){
     var gW = $('#grid').width();
     var gH = $('#grid').height();
-
     var ratioW = Math.ceil(gW/squareGrid); /*round up*/
     var ratioH = Math.ceil(gH/squareGrid);
 
