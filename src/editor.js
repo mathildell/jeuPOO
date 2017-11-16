@@ -1,5 +1,9 @@
 $(function(){
 
+  // Load available resources in "editor json level"
+  // Welcome menu : load / create level
+  // Editor
+
   //load grid
   // for 70 / 70
   var squareGrid = 70;
@@ -67,3 +71,5 @@ $(function(){
 
 
 });
+
+

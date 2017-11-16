@@ -14,7 +14,7 @@ level.resources.players.push({name: 'hero', image: 'hero', inputs: [
     {key: keysEnum.up,    action: {type: actionsEnum.jump, power: 900}}
 ]});
 
-level.scene.settings.gravity = 800;
+level.scene.settings.gravity = 1000;
 
 level.scene.grid.size = 128;
 level.scene.grid.width = 10;
@@ -33,7 +33,7 @@ level.scene.actors.push({x: 1, y: 4, type: 'player', name: 'hero'});
 
 window.onload = function() {
 
-    const game = new Phaser.Game(
+    game = new Phaser.Game(
         level.scene.grid.size * level.scene.grid.width,
         level.scene.grid.size * level.scene.grid.height,
         Phaser.AUTO,
@@ -153,6 +153,7 @@ window.onload = function() {
     }
 
     function update() {
+        const delta = game.time.physicsElapsed;
         for (let player of players) {
             game.physics.arcade.collide(player, platforms);
         }
