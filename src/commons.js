@@ -1,6 +1,9 @@
 
 'use strict';
 
+// ____________
+// Enumerations
+
 const actionEnum = Object.freeze({
     move:  Symbol('move'),
     spawn: Symbol('spawn'),
@@ -40,8 +43,8 @@ const orientationEnum = Object.freeze({
     right: Symbol('right'),
 });
 
-// *Model and *Scene classes reference other *Model or *Scene objects with string, for serialisation
-
+// ________________________
+// Models (level resources)
 
 class ActionModel {
     constructor(name) {
@@ -65,41 +68,6 @@ class ActionModel {
     }
 }
 
-class Action {
-    constructor(model, entity) {
-        this.model = model;
-        this.entity = entity;
-        this.CD = 0;
-    }
-    update(delta) {
-        this.CD -= this.model.cooldown;
-        if (this.CD < 0) this.CD = 0;
-    }
-    on() {
-        if (this.CD !== 0) return;
-        if (this.entity.isDead()) return;
-        if (this.entity.hasGravity && !this.model.whileFalling) return;
-
-        this.CD = this.model.cooldown;
-        if (this.entity.animation.model.type !== this.model.animType) {
-            const animModel = this.entity.model.animations[this.model.animType];
-            this.entity.animation = new Animation(animModel);
-        }
-        switch (type) {
-            case actionEnum.move:
-                this.entity.position.x += this.model.shift.x;
-                this.entity.position.y += this.model.shift.y;
-                break;
-            case actionEnum.spawn:
-
-                break;
-            case actionEnum.aoe:
-
-                break;
-        }
-    }
-}
-
 class HitboxModel {
     constructor(name) {
         this.name = name;
@@ -111,7 +79,6 @@ class HitboxModel {
     }
 }
 
-// An entity model created in the editor
 class EntityModel {
     constructor(name) {
         this.name = name;
@@ -140,80 +107,6 @@ class EntityModel {
     }
 }
 
-// An entity placed in the editor scene
-class EntityScene {
-    constructor(model, position) {
-        this.modelName = model.name;
-        this.image = model.isAnimated
-            ? model.animations[animationEnum.idle].getImageName(0, orientationEnum.right)
-            : model.image.name;
-        this.position = position;
-    }
-}
-
-// An entity in game
-// It's updated by it's sprite and by the update function
-// The sprite passed must have scene settings (gravity, ...)
-class Entity {
-    constructor(level, sceneModel, sprite) { // TODO Set sprite image & hitbox
-        this.level = level;
-        this.sprite = sprite;
-        this.model = level.resources.entities.find(m => m.name === sceneModel.modelName);
-        this.sprite.position.x = sceneModel.position.x;
-        this.sprite.position.y = sceneModel.position.y;
-        this.sprite.speed.x = 0;
-        this.sprite.speed.y = 0;
-
-        if (this.model.hitbox) {
-            this.sprite.body.width = this.model.hitbox.width;
-            this.sprite.body.height = this.model.hitbox.height;
-        }
-        if (this.model.isDestructible) {
-            this.PV = this.model.PVMax;
-        }
-        if (this.model.isAnimated) {
-            if (!this.model.animations) {
-                this.model.animations = [];
-                for (let name of this.model.animationNames) {
-                    this.model.animations.push(level.resources.animations.find(a => a.name === name));
-                }
-            }
-
-            let animModel = this.model.animation[animationEnum.birth];
-            if (!animModel) {
-                animModel = this.model.animation[animationEnum.idle];
-            }
-            this.animation = new Animation(animModel);
-        }
-    }
-    update(delta) {
-        if (this.model.isAnimated) {
-            this.animation.update(delta);
-            if (this.animation.isFinished) {
-                let animModel = this.model.animation[animationEnum.fall];
-                if (this.sprite.body.touching.down || !this.model.hasGravity) {
-                    animModel = (this.sprite.speed.x === 0
-                        ? this.model.animation[animationEnum.idle]
-                        : this.model.animation[animationEnum.run]);
-                }
-                this.animation = new Animation(animModel);
-            }
-        }
-    }
-    isDead() {
-        return this.model.isDestructible && this.PV === 0;
-    }
-}
-
-class DecorScene {
-    constructor(position, imageName, hasBody) {
-        this.position = position;
-        this.imageName = imageName;
-        this.hasBody = hasBody;
-    }
-}
-
-// A simple representation of an image
 class ImageModel {
     constructor(name, file) {
         this.name = name;
@@ -225,7 +118,6 @@ class ImageModel {
     }
 }
 
-// An animation proposed in the editor
 class AnimationModel {
     constructor(name, type, time, count, hasOrientation, folder) {
         this.name = name;
@@ -269,32 +161,37 @@ class AnimationModel {
     }
 }
 
-// An animation in game
-class Animation {
-    constructor(model) {
-        this.model = model;
-        this.current = 0;
-        this.isFinished = false;
-    }
-    update(delta) {
-        this.current += delta;
-        if (this.current >= this.model.time) {
-            this.current = this.model.time - 0.01;
-            this.isFinished = true;
-        }
-    }
-    getImageName(orientation) {
-        return this.model.getImageName(current, orientation);
+// _____________
+// Scene objects
+
+class EntityScene {
+    constructor(model, position) {
+        this.modelName = model.name;
+        this.image = model.isAnimated
+            ? model.animations[animationEnum.idle].getImageName(0, orientationEnum.right)
+            : model.image.name;
+        this.position = position;
     }
 }
 
-// The object containing all informations on a level
+class DecorScene {
+    constructor(position, imageName, hasBody) {
+        this.position = position;
+        this.imageName = imageName;
+        this.hasBody = hasBody;
+    }
+}
+
+// ____________________
+// The level descriptor
+
 class JSONLevel {
     constructor(name) {
         this.resources = {
             images: [],
             animations: [],
             actions: [],
+            hitboxes: [],
             entities: []
         };
         this.scene = {
