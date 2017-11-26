@@ -20,7 +20,13 @@ level.preload();
     level.scene.grid.decor.push(new DecorScene({x: 4, y: 3}, 'ground', true));
     level.scene.grid.decor.push(new DecorScene({x: 5, y: 3}, 'ground', true));
 
-    let actionRun = new ActionModel('heroRun');
+    const persoHitbox = new HitboxModel('perso');
+    level.resources.hitboxes.push(persoHitbox);
+    persoHitbox.width = 60;
+    persoHitbox.height = 100;
+
+    const actionRun = new ActionModel('heroRun');
+    level.resources.actions.push(actionRun);
     actionRun.type = actionEnum.move;
     actionRun.shift = {x: 10, y: 0};
     actionRun.whileFalling = false;
@@ -28,7 +34,8 @@ level.preload();
     actionRun.locked = false;
     actionRun.animType = animationEnum.none;
 
-    let heroModel = new EntityModel('hero');
+    const heroModel = new EntityModel('hero');
+    level.resources.entities.push(heroModel);
     heroModel.animations.push('heroIdle');
     heroModel.animations.push('heroAttack');
     heroModel.animations.push('heroCast');
@@ -38,8 +45,19 @@ level.preload();
     heroModel.PVMax = 3;
     heroModel.isDestructible = true;
     heroModel.actions.push(actionRun);
+    heroModel.hitboxName = 'perso';
+    heroModel.hasGravity = true;
 
-    level.resources.entities.push(heroModel);
+    const cultistModel = new EntityModel('cultist');
+    level.resources.entities.push(cultistModel);
+    cultistModel.imageName = 'cultist';
+    cultistModel.isAnimated = false;
+    cultistModel.isDestructible = false;
+    cultistModel.hitboxName = 'perso';
+    cultistModel.hasGravity = true;
+
+
+    level.scene.entities.push(new EntityScene(cultistModel, {x: 300, y: 200}));
 }());
 
 // _______________
@@ -49,19 +67,22 @@ class Entity {
     constructor(sceneModel) {
         this.model = level.resources.entities.find(m => m.name === sceneModel.modelName);
         this.sprite = game.add.sprite(sceneModel.position.x, sceneModel.position.y);
+        this.sprite.anchor.setTo(0, 0.5);
 
         if (this.model.hitbox) {
             game.physics.enable(this.sprite);
             this.sprite.body.width = this.model.hitbox.width;
             this.sprite.body.height = this.model.hitbox.height;
-            // TODO Handle collision
+
+            if (this.model.hasGravity) {
+                this.sprite.body.gravity.y = level.settings.gravity;
+            }
         }
-        else {
-            // ?
-        }
+
         if (this.model.isDestructible) {
             this.PV = this.model.PVMax;
         }
+
         if (this.model.isAnimated) {
             // Cache animations in the model
             if (!this.model.animations) {
@@ -76,15 +97,29 @@ class Entity {
                 animModel = this.model.animation[animationEnum.idle];
             }
             this.animation = new Animation(animModel);
-            // set texture
+            this.sprite.loadTexture(this.animation.getImageName(orientationEnum.right));
         }
         else {
-            // set texture
+            this.sprite.loadTexture(this.model.imageName);
+        }
+
+        this.actions = [];
+        for (let name of this.model.actionNames) {
+            const model = level.resources.actions.find(m => m.name === name);
+            this.actions.push(new Action(model, this));
         }
     }
     update(delta) {
+        for (let action of this.actions) {
+            action.update(delta);
+        }
+
         if (this.model.isAnimated) {
             this.animation.update(delta);
+            this.sprite.loadTexture(this.animation.getImageName(
+                this.sprite.speed.x < 0
+                    ? orientationEnum.left
+                    : orientationEnum.right));
             if (this.animation.isFinished) {
                 let animModel = this.model.animation[animationEnum.fall];
                 if (this.sprite.body.touching.down || !this.model.hasGravity) {
@@ -141,8 +176,8 @@ class Action {
         }
         switch (type) {
             case actionEnum.move:
-                this.entity.position.x += this.model.shift.x;
-                this.entity.position.y += this.model.shift.y;
+                this.entity.sprite.x += this.model.shift.x;
+                this.entity.sprite.y += this.model.shift.y;
                 break;
             case actionEnum.spawn:
 

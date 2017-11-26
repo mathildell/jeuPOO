@@ -1,47 +1,60 @@
 
 'use strict';
 
-// ____________
-// Enumerations
+// ____________________
+// The level descriptor
 
-const actionEnum = Object.freeze({
-    move:  Symbol('move'),
-    spawn: Symbol('spawn'),
-    aoe:   Symbol('aoe'),
-});
+class JSONLevel {
+    constructor(name) {
+        this.resources = {
+            images: [],
+            animations: [],
+            actions: [],
+            hitboxes: [],
+            entities: []
+        };
+        this.scene = {
+            settings: {
+                name: name,
+                gravity: 1000
+            },
+            grid: {
+                size: 64,
+                width: 20,
+                height: 12,
+                decor: []
+            },
+            entities: []
+        };
+    }
 
-const keyEnum = Object.freeze({ // TODO Another way to not bind every key ?
-    left:  Symbol('left'),
-    right: Symbol('right'),
-    up:    Symbol('up'),
-    down:  Symbol('down'),
-    a:     Symbol('a'),
-    z:     Symbol('z'),
-    // ...
-});
+    preload() {
+        this.resources.images.push(new ImageModel('hero', 'assets/hero.png'));
+        this.resources.images.push(new ImageModel('ground', 'assets/bricks.png'));
 
-const animationEnum = Object.freeze({
-    none:   Symbol('none'),
-    birth:   Symbol('birth'),
-    death:   Symbol('death'),
-    idle:    Symbol('idle'),
-    run:     Symbol('run'),
-    fall:    Symbol('fall'),
-    hurt:    Symbol('hurt'),
-    action1: Symbol('action1'),
-    action2: Symbol('action2'),
-    action3: Symbol('action3'),
-    action4: Symbol('action4'),
-    action5: Symbol('action5'),
-    action6: Symbol('action6'),
-    action7: Symbol('action7'),
-    action8: Symbol('action8'),
-});
+        this.resources.animations.push(new AnimationModel(
+            'heroIdle', animationEnum.idle, 1, 1, true, 'assets/hero/idle'));
+        this.resources.animations.push(new AnimationModel(
+            'heroRun', animationEnum.run, 0.5, 2, true, 'assets/hero/run'));
+        this.resources.animations.push(new AnimationModel(
+            'heroDeath', animationEnum.death, 2, 14, false, 'assets/hero/death'));
+        this.resources.animations.push(new AnimationModel(
+            'heroAttack', animationEnum.action1, 0.5, 3, true, 'assets/hero/attack'));
+        this.resources.animations.push(new AnimationModel(
+            'heroCast', animationEnum.action2, 0.5, 3, true, 'assets/hero/cast'));
 
-const orientationEnum = Object.freeze({
-    left:  Symbol('left'),
-    right: Symbol('right'),
-});
+        this.resources.animations.push(new AnimationModel(
+            'cultistIdle', animationEnum.idle, 1, 1, true, 'assets/cultist/idle'));
+        this.resources.animations.push(new AnimationModel(
+            'cultistRun', animationEnum.run, 0.5, 2, true, 'assets/cultist/run'));
+        this.resources.animations.push(new AnimationModel(
+            'cultistDeath', animationEnum.death, 2, 16, false, 'assets/cultist/death'));
+        this.resources.animations.push(new AnimationModel(
+            'cultistAttack', animationEnum.action1, 0.5, 3, true, 'assets/cultist/attack'));
+        this.resources.animations.push(new AnimationModel(
+            'cultistCast', animationEnum.action2, 0.5, 2, true, 'assets/cultist/cast'));
+    }
+}
 
 // ________________________
 // Models (level resources)
@@ -75,7 +88,6 @@ class HitboxModel {
         this.height = 0;
         this.damages = 0;
         this.tagsAffected = {}; // No tags = everyone
-        this.isSolid = true;
     }
 }
 
@@ -86,7 +98,7 @@ class EntityModel {
         this.hitboxName = '';
         this.imageName = null;
         this.animationNames = [];
-        this.actions = [];
+        this.actionNames = [];
         this.PVMax = 1;
         this.isAnimated = false;
         this.hasGravity = false;
@@ -182,57 +194,44 @@ class DecorScene {
     }
 }
 
-// ____________________
-// The level descriptor
+// ____________
+// Enumerations
 
-class JSONLevel {
-    constructor(name) {
-        this.resources = {
-            images: [],
-            animations: [],
-            actions: [],
-            hitboxes: [],
-            entities: []
-        };
-        this.scene = {
-            settings: {
-                name: name,
-                gravity: 1000
-            },
-            grid: {
-                size: 64,
-                width: 20,
-                height: 12,
-                decor: []
-            },
-            entities: []
-        };
-    }
+const actionEnum = Object.freeze({
+    move:  Symbol('move'),
+    spawn: Symbol('spawn'),
+    aoe:   Symbol('aoe'),
+});
 
-    preload() {
-        this.resources.images.push(new ImageModel('hero', 'assets/hero.png'));
-        this.resources.images.push(new ImageModel('ground', 'assets/bricks.png'));
+const keyEnum = Object.freeze({ // TODO Another way to not bind every key ?
+    left:  Symbol('left'),
+    right: Symbol('right'),
+    up:    Symbol('up'),
+    down:  Symbol('down'),
+    a:     Symbol('a'),
+    z:     Symbol('z'),
+    // ...
+});
 
-        this.resources.animations.push(new AnimationModel(
-            'heroIdle', animationEnum.idle, 1, 1, true, 'assets/hero/idle'));
-        this.resources.animations.push(new AnimationModel(
-            'heroRun', animationEnum.run, 0.5, 2, true, 'assets/hero/run'));
-        this.resources.animations.push(new AnimationModel(
-            'heroDeath', animationEnum.death, 2, 14, false, 'assets/hero/death'));
-        this.resources.animations.push(new AnimationModel(
-            'heroAttack', animationEnum.action1, 0.5, 3, true, 'assets/hero/attack'));
-        this.resources.animations.push(new AnimationModel(
-            'heroCast', animationEnum.action2, 0.5, 3, true, 'assets/hero/cast'));
+const animationEnum = Object.freeze({
+    none:   Symbol('none'),
+    birth:   Symbol('birth'),
+    death:   Symbol('death'),
+    idle:    Symbol('idle'),
+    run:     Symbol('run'),
+    fall:    Symbol('fall'),
+    hurt:    Symbol('hurt'),
+    action1: Symbol('action1'),
+    action2: Symbol('action2'),
+    action3: Symbol('action3'),
+    action4: Symbol('action4'),
+    action5: Symbol('action5'),
+    action6: Symbol('action6'),
+    action7: Symbol('action7'),
+    action8: Symbol('action8'),
+});
 
-        this.resources.animations.push(new AnimationModel(
-            'cultistIdle', animationEnum.idle, 1, 1, true, 'assets/cultist/idle'));
-        this.resources.animations.push(new AnimationModel(
-            'cultistRun', animationEnum.run, 0.5, 2, true, 'assets/cultist/run'));
-        this.resources.animations.push(new AnimationModel(
-            'cultistDeath', animationEnum.death, 2, 16, false, 'assets/cultist/death'));
-        this.resources.animations.push(new AnimationModel(
-            'cultistAttack', animationEnum.action1, 0.5, 3, true, 'assets/cultist/attack'));
-        this.resources.animations.push(new AnimationModel(
-            'cultistCast', animationEnum.action2, 0.5, 2, true, 'assets/cultist/cast'));
-    }
-}
+const orientationEnum = Object.freeze({
+    left:  Symbol('left'),
+    right: Symbol('right'),
+});
