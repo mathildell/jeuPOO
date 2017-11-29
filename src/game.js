@@ -20,11 +20,17 @@ level.preload();
     level.scene.grid.decor.push(new DecorScene({x: 4, y: 3}, 'ground', true));
     level.scene.grid.decor.push(new DecorScene({x: 5, y: 3}, 'ground', true));
 
+    // At creation : enable physics, set body size
     const persoHitbox = new HitboxModel('perso');
     level.resources.hitboxes.push(persoHitbox);
     persoHitbox.width = 60;
     persoHitbox.height = 100;
+    persoHitbox.hasGravity = true;
+    persoHitbox.bounciness = 0;
+    persoHitbox.damages = 1;
+    persoHitbox.tagsAffected.push('perso');
 
+    // At creation : get key (?), onPress => create callback
     const actionRun = new ActionModel('heroRun');
     level.resources.actions.push(actionRun);
     actionRun.type = actionEnum.move;
@@ -33,7 +39,7 @@ level.preload();
     actionRun.cooldown = 0;
     actionRun.locked = false;
     actionRun.animType = animationEnum.none;
-
+/*
     const heroModel = new EntityModel('hero');
     level.resources.entities.push(heroModel);
     heroModel.animations.push('heroIdle');
@@ -47,7 +53,7 @@ level.preload();
     heroModel.actions.push(actionRun);
     heroModel.hitboxName = 'perso';
     heroModel.hasGravity = true;
-
+*/
     const cultistModel = new EntityModel('cultist');
     level.resources.entities.push(cultistModel);
     cultistModel.imageName = 'cultist';
@@ -55,7 +61,6 @@ level.preload();
     cultistModel.isDestructible = false;
     cultistModel.hitboxName = 'perso';
     cultistModel.hasGravity = true;
-
 
     level.scene.entities.push(new EntityScene(cultistModel, {x: 300, y: 200}));
 }());
@@ -67,18 +72,43 @@ class Entity {
     constructor(sceneModel) {
         this.model = level.resources.entities.find(m => m.name === sceneModel.modelName);
         this.sprite = game.add.sprite(sceneModel.position.x, sceneModel.position.y);
+        this.sprite.myEntity = this;
         this.sprite.anchor.setTo(0, 0.5);
 
         if (this.model.hitbox) {
             game.physics.enable(this.sprite);
             this.sprite.body.width = this.model.hitbox.width;
             this.sprite.body.height = this.model.hitbox.height;
-
-            if (this.model.hasGravity) {
+            if (this.model.hitbox.hasGravity) {
                 this.sprite.body.gravity.y = level.settings.gravity;
             }
+            this.sprite.body.bounce = this.model.hitbox.bounciness;
+            if (this.model.hitbox.damages !== 0) {
+                this.sprite.body.onCollide = new Phaser.Signal();
+                let callback;
+                const tags = this.model.hitbox.tagsAffected;
+                if (tags === 0) {
+                    callback = function(sprite, other) {
+                        if (other.myEntity.model.isDestructible) {
+                            other.damage(sprite.body.onCollide);
+                        }
+                    }
+                }
+                else {
+                    callback = function(sprite, other) {
+                        const model = other.myEntity.model;
+                        if (model.isDestructible && tags.includes(model.tag)) {
+                            other.damage(sprite.body.onCollide);
+                        }
+                    }
+                }
+                this.sprite.body.add(callback, this);
+            }
+            this.movable = this.sprite.movable;
         }
-
+        else {
+            this.movable = this.sprite;
+        }
         if (this.model.isDestructible) {
             this.PV = this.model.PVMax;
         }
@@ -252,7 +282,7 @@ window.onload = function() {
         }
 
         for (let e of level.scene.entities) {
-            const entity = new Entity(level, e, game.add.sprite(e.position.x, e.position.y));
+            const entity = new Entity(e);
         }
     }
 

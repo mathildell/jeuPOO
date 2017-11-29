@@ -86,8 +86,10 @@ class HitboxModel {
         this.name = name;
         this.width = 0;
         this.height = 0;
+        this.hasGravity = false;
+        this.bounciness = 0;
         this.damages = 0;
-        this.tagsAffected = {}; // No tags = everyone
+        this.tagsAffected = []; // No tags = everyone
     }
 }
 
@@ -113,7 +115,6 @@ class EntityModel {
         entity.actions = this.actions;
         entity.PVMax = this.PVMax;
         entity.isAnimated = this.isAnimated;
-        entity.hasGravity = this.hasGravity;
         entity.isDestructible = this.isDestructible;
         return entity;
     }
@@ -126,7 +127,6 @@ class ImageModel {
     }
     load(game) {
         game.load.image(this.name, this.file);
-        window.alert(this.name + '<' + this.file + '> charged');
     }
 }
 
@@ -181,7 +181,7 @@ class EntityScene {
         this.modelName = model.name;
         this.image = model.isAnimated
             ? model.animations[animationEnum.idle].getImageName(0, orientationEnum.right)
-            : model.image.name;
+            : model.imageName;
         this.position = position;
     }
 }
