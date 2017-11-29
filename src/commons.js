@@ -179,7 +179,7 @@ class AnimationModel {
 class EntityScene {
     constructor(model, position) {
         this.modelName = model.name;
-        this.image = model.isAnimated
+        this.imageName = model.isAnimated
             ? model.animations[animationEnum.idle].getImageName(0, orientationEnum.right)
             : model.imageName;
         this.position = position;
