@@ -67,43 +67,47 @@ class ActionModel {
     constructor(name) {
         this.name = name;
         this.type = actionEnum.move;
+        this.key = Phaser.KeyCode.SPACEBAR;
+
+        this.whileFalling = true;
+        this.locked = false;
+        this.cooldown = 0;
 
         // Move data
         this.shift = {x: 0, y: 0};
+        this.speed = {x: 0, y: 0};
         // Spawn data
         this.entity = null;
         this.distance = 0;
         this.speed = {x: 0, y: 0};
-        // AoE data
-        this.hitbox = null;
-        this.distance = 0;
-
-        this.whileFalling = true;
         this.animType = animationEnum.none;
-        this.locked = false;
-        this.cooldown = 0;
-    }
-}
-
-class HitboxModel {
-    constructor(name) {
-        this.name = name;
-        this.width = 0;
-        this.height = 0;
-        this.isSolid = true;
-        this.hasGravity = false;
-        this.bounciness = 0;
-        this.damages = 0;
-        this.tagsAffected = []; // No tags = everyone
+        // AoE data
+        this.hitboxWidth = 0;
+        this.hitboxHeight = 0;
+        this.distance = 0;
+        this.animType = animationEnum.none;
     }
     copy(name) {
-        const hitbox = new HitboxModel(name);
-        hitbox.width = this.width;
-        hitbox.height = this.height;
-        hitbox.hasGravity = this.hasGravity;
-        hitbox.bounciness = this.bounciness;
-        hitbox.damages = this.damages;
-        hitbox.tagsAffected = this.tagsAffected.slice();
+        const model = new ActionModel(name);
+        model.type = this.type;
+        model.key = this.key;
+
+        // Move data
+        model.shift = {x: this.shift.x, y: this.shift.y};
+        // Spawn data
+        model.entity = this.entity;
+        model.distance = this.distance;
+        model.speed = {x: this.speed.x, y: this.speed.y};
+        // AoE data
+        model.hitboxName = this.hitboxName;
+        model.distance = this.distance;
+
+        model.whileFalling = this.whileFalling;
+        model.animType = this.animType;
+        model.locked = this.locked;
+        model.cooldown = this.cooldown;
+
+        return model;
     }
 }
 
@@ -111,25 +115,39 @@ class EntityModel {
     constructor(name) {
         this.name = name;
         this.tag = '';
-        this.hitboxName = '';
         this.imageName = null;
         this.animationNames = [];
         this.actionNames = [];
-        this.PVMax = 1;
+        this.PVMax = 0;
         this.isAnimated = false;
         this.isDestructible = false;
+        this.width = 64;
+        this.height = 64;
+        this.bounciness = 0;
+        this.hasGravity = false;
+        this.collisionType = hitboxEnum.physical;
+        this.collisionDamages = 0;
+        this.collisionTags = [];
+
     }
     copy(name) {
-        const entity = new EntityModel(name);
-        entity.tag = this.tag;
-        entity.hitboxName = this.hitboxName;
-        entity.imageName = this.imageName;
-        entity.animationNames = this.animationNames;
-        entity.actionNames = this.actionNames;
-        entity.PVMax = this.PVMax;
-        entity.isAnimated = this.isAnimated;
-        entity.isDestructible = this.isDestructible;
-        return entity;
+        const model = new EntityModel(name);
+        model.tag = this.tag;
+        model.imageName = this.imageName;
+        model.animationNames = this.animationNames.slice();
+        model.actionNames = this.actionNames.slice();
+        model.PVMax = this.PVMax;
+        model.isAnimated = this.isAnimated;
+        model.isDestructible = this.isDestructible;
+        model.width = this.width;
+        model.height = this.height;
+        model.bounciness = this.bounciness;
+        model.hasGravity = this.hasGravity;
+        model.collisionType = this.collisionType;
+        model.collisionDamages = this.collisionDamages;
+        model.collisionTags = this.collisionTags.slice();
+
+        return model;
     }
     getAnimation(type, level) {
         let anim;
@@ -226,18 +244,18 @@ const actionEnum = Object.freeze({
     aoe:   Symbol('aoe'),
 });
 
-const keyEnum = Object.freeze({ // TODO Another way to not bind every key ?
+const orientationEnum = Object.freeze({
     left:  Symbol('left'),
     right: Symbol('right'),
-    up:    Symbol('up'),
-    down:  Symbol('down'),
-    a:     Symbol('a'),
-    z:     Symbol('z'),
-    // ...
+});
+
+const hitboxEnum = Object.freeze({
+    immaterial: Symbol('immaterial'),
+    physical:   Symbol('physical')
 });
 
 const animationEnum = Object.freeze({
-    none:   Symbol('none'),
+    none:    Symbol('none'),
     birth:   Symbol('birth'),
     death:   Symbol('death'),
     idle:    Symbol('idle'),
@@ -252,9 +270,4 @@ const animationEnum = Object.freeze({
     action6: Symbol('action6'),
     action7: Symbol('action7'),
     action8: Symbol('action8'),
-});
-
-const orientationEnum = Object.freeze({
-    left:  Symbol('left'),
-    right: Symbol('right'),
 });

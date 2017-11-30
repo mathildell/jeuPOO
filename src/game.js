@@ -20,38 +20,28 @@ level.preload();
     level.scene.grid.decor.push(new DecorScene({x: 4, y: 3}, 'ground', true));
     level.scene.grid.decor.push(new DecorScene({x: 5, y: 3}, 'ground', true));
 
-    const persoHitbox = new HitboxModel('perso');
-    level.resources.hitboxes.push(persoHitbox);
-    persoHitbox.width = 64;
-    persoHitbox.height = 128;
-    persoHitbox.hasGravity = true;
-    persoHitbox.bounciness = 0;
-    persoHitbox.damages = 1;
-    persoHitbox.tagsAffected.push('perso');
+    const leftRun = new ActionModel('runLeft');
+    level.resources.actions.push(leftRun);
+    leftRun.key = Phaser.KeyCode.Q;
+    leftRun.type = actionEnum.move;
+    leftRun.shift = {x: -10, y: 0};
+    leftRun.whileFalling = true;
+    leftRun.cooldown = 0;
+    leftRun.locked = false;
 
-    const actionRun = new ActionModel('heroRun');
-    level.resources.actions.push(actionRun);
-    actionRun.type = actionEnum.move;
-    actionRun.shift = {x: 10, y: 0};
-    actionRun.whileFalling = false;
-    actionRun.cooldown = 0;
-    actionRun.locked = false;
-    actionRun.animType = animationEnum.none;
-/*
-    const heroModel = new EntityModel('hero');
-    level.resources.entities.push(heroModel);
-    heroModel.animationNames.push('heroIdle');
-    heroModel.animationNames.push('heroAttack');
-    heroModel.animationNames.push('heroCast');
-    heroModel.animationNames.push('heroDeath');
-    heroModel.animationNames.push('heroRun');
-    heroModel.isAnimated = true;
-    heroModel.PVMax = 3;
-    heroModel.isDestructible = true;
-    heroModel.actions.push(actionRun);
-    heroModel.hitboxName = 'perso';
-    heroModel.hasGravity = true;
-*/
+    const rightRun = leftRun.copy('runRight');
+    level.resources.actions.push(rightRun);
+    leftRun.key = Phaser.KeyCode.D;
+    leftRun.shift = {x: 10, y: 0};
+
+    const jump = leftRun.copy('jump');
+    level.resources.actions.push(jump);
+    leftRun.key = Phaser.KeyCode.SPACEBAR;
+    leftRun.shift = {x: 0, y: 0};
+    leftRun.speed = {x: 0, y: 100};
+    leftRun.whileFalling = false;
+
+
     const cultistModel = new EntityModel('cultist');
     level.resources.entities.push(cultistModel);
     //cultistModel.imageName = 'cultist';
@@ -62,10 +52,23 @@ level.preload();
     cultistModel.animationNames.push('cultistRun');
     cultistModel.isAnimated = true;
     cultistModel.isDestructible = false;
-    cultistModel.hitboxName = 'perso';
+    cultistModel.width = 60;
+    cultistModel.height = 95;
+    cultistModel.hitboxType = hitboxEnum.physical;
+    cultistModel.bounciness = 0.5;
+    cultistModel.hasGravity = true;
+    cultistModel.collisionDamages = 0;
+
+    const myCultistModel = new EntityModel(cultistModel);
+    level.resources.entities.push(myCultistModel);
+    myCultistModel.actionNames.push('runLeft');
+    myCultistModel.actionNames.push('runRight');
+
 
     level.scene.entities.push(new EntityScene(cultistModel, {x: 300, y: 200}, level));
     level.scene.entities.push(new EntityScene(cultistModel, {x: 300, y: 0}, level));
+
+    level.settings.gravity = 300;
 }());
 
 // _______________
@@ -74,100 +77,114 @@ level.preload();
 // hitboxes opti : 1D sort
 // https://ra3s.com/wordpress/dysfunctional-programming/2015/01/29/pruning-collision-detection-with-a-1d-sort/
 
-
-const collisionEnum = Object.freeze({
-    physical:   Symbol('physical'),
-    immaterial: Symbol('immaterial'),
-    none:       Symbol('none')
-});
-
 class Entity { // TODO Death (remove hitbox)
     constructor(sceneModel) {
-        this.model = level.resources.entities.find(m => m.name === sceneModel.modelName);
+        const model = level.resources.entities.find(m => m.name === sceneModel.modelName);
+        this.model = model;
         this.sprite = game.add.sprite(sceneModel.position.x, sceneModel.position.y);
         this.sprite.myEntity = this;
-        this.sprite.anchor.setTo(0, 0.5);
+        this.sprite.anchor.setTo(0.5, 1);
 
-        if (this.model.isDestructible) {
-            const PVs = this.model.PVMax;
+        if (model.isDestructible) {
+            const PVs = model.PVMax;
             this.sprite.maxHealth = PVs;
             this.sprite.setHealth(PVs);
         }
 
-        if (this.model.hitboxName) {
-            this.hitbox = level.resources.hitboxes.find(m => m.name === this.model.hitboxName);
-            game.physics.enable(this.sprite);
-            this.sprite.body.width = this.hitbox.width;
-            this.sprite.body.height = this.hitbox.height;
-            if (this.hitbox.hasGravity) {
-                this.sprite.body.gravity.y = level.settings.gravity;
-            }
-            this.sprite.body.bounce = this.hitbox.bounciness;
-
-            this.collisionType = this.hitbox.isSolid
-                ? collisionEnum.physical
-                : collisionEnum.immaterial;
-            this.movable = this.sprite.body;
+        game.physics.enable(this.sprite, Phaser.Physics.ARCADE);
+        this.sprite.body.bounce.set(model.bounciness);
+        if (model.hasGravity) {
+            this.sprite.body.gravity.y = level.settings.gravity;
         }
-        else {
-            this.collisionType = collisionEnum.none;
-            this.movable = this.sprite;
-        }
+        this.cleanVelocity = {x: 0, y: 0};
 
-        if (this.model.isAnimated) {
+        if (model.isAnimated) {
             // Cache animations in the model
-            if (!this.model.animations) {
-                this.model.animations = {};
-                for (let name of this.model.animationNames) {
+            if (!model.animations) {
+                model.animations = {};
+                for (let name of model.animationNames) {
                     const anim = level.resources.animations.find(a => a.name === name);
-                    this.model.animations[anim.type] = anim;
+                    model.animations[anim.type] = anim;
                 }
             }
-            let animModel = this.model.animations[animationEnum.birth];
+            let animType = animationEnum.birth;
+            let animModel = model.animations[animType];
             if (!animModel) {
-                animModel = this.model.animations[animationEnum.idle];
+                animType = animationEnum.idle;
+                animModel = model.animations[animType];
             }
+            this._animType = animType;
             this.animation = new Animation(animModel);
-            this.sprite.loadTexture(this.animation.getImageName(orientationEnum.right));
+            this._updateSprite(this.animation.getImageName(orientationEnum.right));
         }
         else {
-            this.sprite.loadTexture(this.model.imageName);
+            this._updateSprite(model.imageName);
         }
+        this.sprite.body.setSize(model.width, model.height);
 
         this.actions = [];
-        for (let name of this.model.actionNames) {
-            const model = level.resources.actions.find(m => m.name === name);
-            this.actions.push(new Action(model, this));
+        if (!model.actions) {
+            for (let name of model.actionNames) {
+                const model = level.resources.actions.find(m => m.name === name);
+                model.actions.push(model);
+            }
+        }
+        for (const actionModel of model.actions) {
+            this.actions.push(new Action(actionModel, this));
         }
     }
+
     update(delta) {
         for (let action of this.actions) {
             action.update(delta);
         }
-
         if (this.model.isAnimated) {
             this._updateAnimation(delta);
         }
+        this.sprite.body.velocity.subtract(this.cleanVelocity.x, this.cleanVelocity.y);
+        this.cleanVelocity.set(0, 0);
+    }
+    _animDefaultType() {
+        const body = this.sprite.body;
+        let type = animationEnum.idle;
+        if (!body.onFloor() && this.model.hasGravity) {
+            type = animationEnum.fall;
+        }
+        else if (body.velocity.x !== 0) {
+            type = animationEnum.run;
+        }
+        return type;
     }
     _updateAnimation(delta) {
+        const body = this.sprite.body;
         this.animation.update(delta);
-        if (this.animation.isFinished) {
-            let animModel = this.model.animations[animationEnum.fall];
-            if (this.sprite.body.touching.down || !this.model.hasGravity) {
-                animModel = (this.movable.speed.x === 0
-                    ? this.model.animations[animationEnum.idle]
-                    : this.model.animations[animationEnum.run]);
-            }
-            this.animation = new Animation(animModel);
+        const defaultType = this._animDefaultType();
+        let mustChangeAnimation = false;
+        if (this._animType !== defaultType &&
+            (this._animType === animationEnum.run ||
+             this._animType === animationEnum.idle ||
+             this._animType === animationEnum.fall)) {
+            this._animType = defaultType;
+            mustChangeAnimation = true;
         }
-        this.sprite.loadTexture(this.animation.getImageName(
-            this.movable.speed.x < 0
+        if (this.animation.isFinished) {
+            mustChangeAnimation = true;
+        }
+        if (mustChangeAnimation) {
+            let model = this.model.animations[this._animType];
+            if (!model) model = this.model.animations[animationEnum.idle];
+            this.animation = new Animation(model);
+        }
+        this._updateSprite(this.animation.getImageName(
+            body.velocity.x < 0
                 ? orientationEnum.left
                 : orientationEnum.right));
     }
-
-    isDead() {
-        return this.model.isDestructible && this.PV === 0;
+    _updateSprite(imageName) {
+        this.sprite.loadTexture(imageName);
+        const gapX = this.sprite.width - this.model.width;
+        const gapY = this.sprite.height - this.model.height;
+        this.sprite.body.setSize(this.model.width, this.model.height, gapX / 2, gapY);
     }
 }
 
@@ -194,14 +211,16 @@ class Action {
         this.model = model;
         this.entity = entity;
         this.CD = 0;
+        game.input.keyboard.a
     }
     update(delta) {
-        this.CD -= delta;
-        if (this.CD < 0) this.CD = 0;
+        if (this.CD > 0) {
+            this.CD -= delta;
+            if (this.CD < 0) this.CD = 0;
+        }
     }
     on() {
         if (this.CD !== 0) return;
-        if (this.entity.isDead()) return;
         if (this.entity.hasGravity && !this.model.whileFalling) return;
 
         this.CD = this.model.cooldown;
@@ -211,8 +230,12 @@ class Action {
         }
         switch (type) {
             case actionEnum.move:
-                this.entity.sprite.x += this.model.shift.x;
-                this.entity.sprite.y += this.model.shift.y;
+                this.entity.cleanVelocity.add(
+                    this.model.shift.x,
+                    this.model.shift.y);
+                this.entity.sprite.body.velocity.add(
+                    this.model.shift.x + this.model.speed.x,
+                    this.model.shift.y + this.model.speed.y);
                 break;
             case actionEnum.spawn:
                 // TODO
@@ -235,8 +258,8 @@ window.onload = function() {
         multiTexture: true,
         state: {
             preload: preload,
-            create: create,
-            update: update
+            create:  create,
+            update:  update
         }
     });
 
@@ -245,9 +268,6 @@ window.onload = function() {
         for (let image of level.resources.imageEntities) {image.load(game);}
         for (let model of level.resources.animations)    {model.load(game);}
     }
-
-    // Inputs object
-    let cursors;
 
     // Group objects
     let gPlatforms;
@@ -292,11 +312,15 @@ window.onload = function() {
 
         for (let e of level.scene.entities) {
             const entity = new Entity(e);
-            if (entity.collisionType === collisionEnum.immaterial) {
+            const collision = entity.model.collisionType;
+            if (collision === hitboxEnum.immaterial) {
                 gOverlaps.add(entity.sprite);
             }
-            if (entity.collisionType === collisionEnum.physical) {
+            else if (collision === hitboxEnum.physical) {
                 gCollides.add(entity.sprite);
+            }
+            else {
+                window.alert("BUG: Entity collision type has wrong value");
             }
             entities.push(entity);
         }
@@ -307,16 +331,16 @@ window.onload = function() {
         _collide(s2, s1);
     }
     function _collide(s1, s2) {
-        const box1 = s1.myEntity.hitbox;
-        if (box1.damages === 0) return;
+        const box1 = s1.myEntity;
+        if (box1.collisionDamages === 0) return;
 
         const model2 = s2.myEntity.model;
 
         if (!model2.isDestructible) return;
-        if (box1.tagsAffected.length !== 0 &&
-            !box1.tagsAffected.includes(model2.tag)) return;
+        if (box1.collisionTags.length !== 0 &&
+            !box1.collisionTags.includes(model2.tag)) return;
 
-        s2.damage(box1.damages);
+        s2.damage(box1.collisionDamages);
     }
 
     function update() {
