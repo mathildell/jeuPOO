@@ -1,7 +1,7 @@
 
 'use strict';
 
-let game = {};
+let game;
 
 // ____________
 // Custom level
@@ -20,17 +20,15 @@ level.preload();
     level.scene.grid.decor.push(new DecorScene({x: 4, y: 3}, 'ground', true));
     level.scene.grid.decor.push(new DecorScene({x: 5, y: 3}, 'ground', true));
 
-    // At creation : enable physics, set body size
     const persoHitbox = new HitboxModel('perso');
     level.resources.hitboxes.push(persoHitbox);
-    persoHitbox.width = 60;
-    persoHitbox.height = 100;
+    persoHitbox.width = 64;
+    persoHitbox.height = 128;
     persoHitbox.hasGravity = true;
     persoHitbox.bounciness = 0;
     persoHitbox.damages = 1;
     persoHitbox.tagsAffected.push('perso');
 
-    // At creation : get key (?), onPress => create callback
     const actionRun = new ActionModel('heroRun');
     level.resources.actions.push(actionRun);
     actionRun.type = actionEnum.move;
@@ -42,11 +40,11 @@ level.preload();
 /*
     const heroModel = new EntityModel('hero');
     level.resources.entities.push(heroModel);
-    heroModel.animations.push('heroIdle');
-    heroModel.animations.push('heroAttack');
-    heroModel.animations.push('heroCast');
-    heroModel.animations.push('heroDeath');
-    heroModel.animations.push('heroRun');
+    heroModel.animationNames.push('heroIdle');
+    heroModel.animationNames.push('heroAttack');
+    heroModel.animationNames.push('heroCast');
+    heroModel.animationNames.push('heroDeath');
+    heroModel.animationNames.push('heroRun');
     heroModel.isAnimated = true;
     heroModel.PVMax = 3;
     heroModel.isDestructible = true;
@@ -56,75 +54,78 @@ level.preload();
 */
     const cultistModel = new EntityModel('cultist');
     level.resources.entities.push(cultistModel);
-    cultistModel.imageName = 'cultist';
-    cultistModel.isAnimated = false;
+    //cultistModel.imageName = 'cultist';
+    cultistModel.animationNames.push('cultistIdle');
+    cultistModel.animationNames.push('cultistAttack');
+    cultistModel.animationNames.push('cultistCast');
+    cultistModel.animationNames.push('cultistDeath');
+    cultistModel.animationNames.push('cultistRun');
+    cultistModel.isAnimated = true;
     cultistModel.isDestructible = false;
     cultistModel.hitboxName = 'perso';
-    cultistModel.hasGravity = true;
 
-    level.scene.entities.push(new EntityScene(cultistModel, {x: 300, y: 200}));
+    level.scene.entities.push(new EntityScene(cultistModel, {x: 300, y: 200}, level));
+    level.scene.entities.push(new EntityScene(cultistModel, {x: 300, y: 0}, level));
 }());
 
 // _______________
 // In game classes
 
-class Entity {
+// hitboxes opti : 1D sort
+// https://ra3s.com/wordpress/dysfunctional-programming/2015/01/29/pruning-collision-detection-with-a-1d-sort/
+
+
+const collisionEnum = Object.freeze({
+    physical:   Symbol('physical'),
+    immaterial: Symbol('immaterial'),
+    none:       Symbol('none')
+});
+
+class Entity { // TODO Death (remove hitbox)
     constructor(sceneModel) {
         this.model = level.resources.entities.find(m => m.name === sceneModel.modelName);
         this.sprite = game.add.sprite(sceneModel.position.x, sceneModel.position.y);
         this.sprite.myEntity = this;
         this.sprite.anchor.setTo(0, 0.5);
 
-        if (this.model.hitbox) {
+        if (this.model.isDestructible) {
+            const PVs = this.model.PVMax;
+            this.sprite.maxHealth = PVs;
+            this.sprite.setHealth(PVs);
+        }
+
+        if (this.model.hitboxName) {
+            this.hitbox = level.resources.hitboxes.find(m => m.name === this.model.hitboxName);
             game.physics.enable(this.sprite);
-            this.sprite.body.width = this.model.hitbox.width;
-            this.sprite.body.height = this.model.hitbox.height;
-            if (this.model.hitbox.hasGravity) {
+            this.sprite.body.width = this.hitbox.width;
+            this.sprite.body.height = this.hitbox.height;
+            if (this.hitbox.hasGravity) {
                 this.sprite.body.gravity.y = level.settings.gravity;
             }
-            this.sprite.body.bounce = this.model.hitbox.bounciness;
-            if (this.model.hitbox.damages !== 0) {
-                this.sprite.body.onCollide = new Phaser.Signal();
-                let callback;
-                const tags = this.model.hitbox.tagsAffected;
-                if (tags === 0) {
-                    callback = function(sprite, other) {
-                        if (other.myEntity.model.isDestructible) {
-                            other.damage(sprite.body.onCollide);
-                        }
-                    }
-                }
-                else {
-                    callback = function(sprite, other) {
-                        const model = other.myEntity.model;
-                        if (model.isDestructible && tags.includes(model.tag)) {
-                            other.damage(sprite.body.onCollide);
-                        }
-                    }
-                }
-                this.sprite.body.add(callback, this);
-            }
-            this.movable = this.sprite.movable;
+            this.sprite.body.bounce = this.hitbox.bounciness;
+
+            this.collisionType = this.hitbox.isSolid
+                ? collisionEnum.physical
+                : collisionEnum.immaterial;
+            this.movable = this.sprite.body;
         }
         else {
+            this.collisionType = collisionEnum.none;
             this.movable = this.sprite;
-        }
-        if (this.model.isDestructible) {
-            this.PV = this.model.PVMax;
         }
 
         if (this.model.isAnimated) {
             // Cache animations in the model
             if (!this.model.animations) {
-                this.model.animations = [];
+                this.model.animations = {};
                 for (let name of this.model.animationNames) {
-                    this.model.animations.push(level.resources.animations.find(a => a.name === name));
+                    const anim = level.resources.animations.find(a => a.name === name);
+                    this.model.animations[anim.type] = anim;
                 }
             }
-
-            let animModel = this.model.animation[animationEnum.birth];
+            let animModel = this.model.animations[animationEnum.birth];
             if (!animModel) {
-                animModel = this.model.animation[animationEnum.idle];
+                animModel = this.model.animations[animationEnum.idle];
             }
             this.animation = new Animation(animModel);
             this.sprite.loadTexture(this.animation.getImageName(orientationEnum.right));
@@ -145,22 +146,26 @@ class Entity {
         }
 
         if (this.model.isAnimated) {
-            this.animation.update(delta);
-            this.sprite.loadTexture(this.animation.getImageName(
-                this.sprite.speed.x < 0
-                    ? orientationEnum.left
-                    : orientationEnum.right));
-            if (this.animation.isFinished) {
-                let animModel = this.model.animation[animationEnum.fall];
-                if (this.sprite.body.touching.down || !this.model.hasGravity) {
-                    animModel = (this.sprite.speed.x === 0
-                        ? this.model.animation[animationEnum.idle]
-                        : this.model.animation[animationEnum.run]);
-                }
-                this.animation = new Animation(animModel);
-            }
+            this._updateAnimation(delta);
         }
     }
+    _updateAnimation(delta) {
+        this.animation.update(delta);
+        if (this.animation.isFinished) {
+            let animModel = this.model.animations[animationEnum.fall];
+            if (this.sprite.body.touching.down || !this.model.hasGravity) {
+                animModel = (this.movable.speed.x === 0
+                    ? this.model.animations[animationEnum.idle]
+                    : this.model.animations[animationEnum.run]);
+            }
+            this.animation = new Animation(animModel);
+        }
+        this.sprite.loadTexture(this.animation.getImageName(
+            this.movable.speed.x < 0
+                ? orientationEnum.left
+                : orientationEnum.right));
+    }
+
     isDead() {
         return this.model.isDestructible && this.PV === 0;
     }
@@ -180,7 +185,7 @@ class Animation {
         }
     }
     getImageName(orientation) {
-        return this.model.getImageName(current, orientation);
+        return this.model.getImageName(this.current, orientation);
     }
 }
 
@@ -191,7 +196,7 @@ class Action {
         this.CD = 0;
     }
     update(delta) {
-        this.CD -= this.model.cooldown;
+        this.CD -= delta;
         if (this.CD < 0) this.CD = 0;
     }
     on() {
@@ -210,10 +215,10 @@ class Action {
                 this.entity.sprite.y += this.model.shift.y;
                 break;
             case actionEnum.spawn:
-
+                // TODO
                 break;
             case actionEnum.aoe:
-
+                // TODO
                 break;
         }
     }
@@ -232,62 +237,102 @@ window.onload = function() {
             preload: preload,
             create: create,
             update: update
-        }});
+        }
+    });
 
     function preload() {
-        for (let image of level.resources.images) {
-            image.load(game);
-        }
-        for (let model of level.resources.animations) {
-            model.load(game);
-        }
+        for (let image of level.resources.imageDecors)   {image.load(game);}
+        for (let image of level.resources.imageEntities) {image.load(game);}
+        for (let model of level.resources.animations)    {model.load(game);}
     }
 
     // Inputs object
     let cursors;
 
-    // Grid objects
-    let platforms;
-    let decors;
+    // Group objects
+    let gPlatforms;
+    let gDecors;
+    let gOverlaps;
+    let gCollides;
 
-    let actions;
+    const entities = [];
 
     function create() {
         game.physics.startSystem(Phaser.Physics.ARCADE);
 
         // Grid
 
-        platforms = game.add.group();
-        platforms.enableBody = true;
-
-        decors = game.add.group();
+        gDecors = game.add.group();
+        gPlatforms = game.add.group();
+        gPlatforms.enableBody = true;
 
         const gridSize = level.scene.grid.size;
         const gridHeight = level.scene.grid.height;
 
         for (let decor of level.scene.grid.decor) {
             if (decor.hasBody) {
-                const platform = platforms.create(
+                const platform = gPlatforms.create(
                     gridSize * decor.position.x,
                     gridSize * (gridHeight - 1 - decor.position.y),
                     decor.imageName);
                 platform.body.immovable = true;
             }
             else {
-                decors.create(
+                gDecors.create(
                     gridSize * decor.x,
                     gridSize * (gridHeight - 1 - decor.position.y),
                     decor.imageName);
             }
         }
 
+        // Entities
+
+        gOverlaps = game.add.group();
+        gCollides = game.add.group();
+
         for (let e of level.scene.entities) {
             const entity = new Entity(e);
+            if (entity.collisionType === collisionEnum.immaterial) {
+                gOverlaps.add(entity.sprite);
+            }
+            if (entity.collisionType === collisionEnum.physical) {
+                gCollides.add(entity.sprite);
+            }
+            entities.push(entity);
         }
+    }
+
+    function collide(s1, s2) {
+        _collide(s1, s2);
+        _collide(s2, s1);
+    }
+    function _collide(s1, s2) {
+        const box1 = s1.myEntity.hitbox;
+        if (box1.damages === 0) return;
+
+        const model2 = s2.myEntity.model;
+
+        if (!model2.isDestructible) return;
+        if (box1.tagsAffected.length !== 0 &&
+            !box1.tagsAffected.includes(model2.tag)) return;
+
+        s2.damage(box1.damages);
     }
 
     function update() {
         const delta = game.time.physicsElapsed;
 
+        game.physics.arcade.collide(gPlatforms, gOverlaps);
+        game.physics.arcade.collide(gPlatforms, gCollides);
+
+        game.physics.arcade.collide(gOverlaps, gOverlaps, collide);
+        game.physics.arcade.collide(gOverlaps, gCollides, collide);
+        game.physics.arcade.collide(gCollides, gCollides, collide);
+
+        for (const entity of entities) {
+            entity.update(delta);
+        }
+
+        // TODO Actions
     }
 };

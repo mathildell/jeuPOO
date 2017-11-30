@@ -4,20 +4,18 @@
 // ____________________
 // The level descriptor
 
+// Store user image name
 class JSONLevel {
     constructor(name) {
         this.resources = {
-            images: [],
+            imageDecors: [],
+            imageEntities: [],
             animations: [],
             actions: [],
             hitboxes: [],
             entities: []
         };
         this.scene = {
-            settings: {
-                name: name,
-                gravity: 1000
-            },
             grid: {
                 size: 64,
                 width: 20,
@@ -26,11 +24,17 @@ class JSONLevel {
             },
             entities: []
         };
+        this.settings = {
+            name: name,
+            gravity: 1000
+        };
     }
 
     preload() {
-        this.resources.images.push(new ImageModel('hero', 'assets/hero.png'));
-        this.resources.images.push(new ImageModel('ground', 'assets/bricks.png'));
+        this.resources.imageDecors.push(new ImageModel('ground', 'assets/bricks.png'));
+
+        this.resources.imageEntities.push(new ImageModel('hero', 'assets/hero.png'));
+        this.resources.imageEntities.push(new ImageModel('cultist', 'assets/cultist.png'));
 
         this.resources.animations.push(new AnimationModel(
             'heroIdle', animationEnum.idle, 1, 1, true, 'assets/hero/idle'));
@@ -86,10 +90,20 @@ class HitboxModel {
         this.name = name;
         this.width = 0;
         this.height = 0;
+        this.isSolid = true;
         this.hasGravity = false;
         this.bounciness = 0;
         this.damages = 0;
         this.tagsAffected = []; // No tags = everyone
+    }
+    copy(name) {
+        const hitbox = new HitboxModel(name);
+        hitbox.width = this.width;
+        hitbox.height = this.height;
+        hitbox.hasGravity = this.hasGravity;
+        hitbox.bounciness = this.bounciness;
+        hitbox.damages = this.damages;
+        hitbox.tagsAffected = this.tagsAffected.slice();
     }
 }
 
@@ -103,7 +117,6 @@ class EntityModel {
         this.actionNames = [];
         this.PVMax = 1;
         this.isAnimated = false;
-        this.hasGravity = false;
         this.isDestructible = false;
     }
     copy(name) {
@@ -112,11 +125,18 @@ class EntityModel {
         entity.hitboxName = this.hitboxName;
         entity.imageName = this.imageName;
         entity.animationNames = this.animationNames;
-        entity.actions = this.actions;
+        entity.actionNames = this.actionNames;
         entity.PVMax = this.PVMax;
         entity.isAnimated = this.isAnimated;
         entity.isDestructible = this.isDestructible;
         return entity;
+    }
+    getAnimation(type, level) {
+        let anim;
+        for (name of this.animationNames) {
+            anim = level.resources.animations.find(m => m.name === name);
+            if (anim.type === type) return anim;
+        }
     }
 }
 
@@ -126,7 +146,8 @@ class ImageModel {
         this.file = file;
     }
     load(game) {
-        game.load.image(this.name, this.file);
+        if (!game.cache.checkImageKey(this.name))
+            game.load.image(this.name, this.file);
     }
 }
 
@@ -139,34 +160,32 @@ class AnimationModel {
         this.hasOrientation = hasOrientation;
         this.folder = folder;
         this.images = [];
+
+        if (this.hasOrientation) {
+            for (let i = 0; i < this.count; i += 1) {
+                this.images[i] = new ImageModel(this.name + i, this.folder + '/left/' + i + '.png');
+
+                const i2 = i + this.count;
+                this.images[i2] = new ImageModel(this.name + i2, this.folder + '/right/' + i + '.png');
+            }
+        }
+        else {
+            for (let i = 0; i < this.count; i += 1) {
+                this.images[i] = new ImageModel(this.name + i, this.folder + '/' + i + '.png');
+            }
+        }
     }
     copy(name, time) {
         return new AnimationModel(name, this.type, time, this.count, this.hasOrientation, this.folder, this.images);
     }
     load(game) {
-        if (this.hasOrientation) {
-            for (let i = 0; i < this.count; i += 1) {
-                const left = new ImageModel(this.name + i, this.folder + '/left/' + i + '.png');
-                game.load.image(left.name, left.file);
-                this.images[i] = left;
-
-                const i2 = i + this.count;
-                const right = new ImageModel(this.name + i2, this.folder + '/right/' + i + '.png');
-                game.load.image(right.name, right.file);
-                this.images[i2] = right;
-            }
-        }
-        else {
-            for (let i = 0; i < this.count; i += 1) {
-                const image = new ImageModel(this.name + i, this.folder + '/' + i + '.png');
-                game.load.image(image.name, image.file);
-                this.images[i] = image;
-            }
+        for (const image of this.images) {
+            image.load(game);
         }
     }
     getImageName(tElapsed, orientation) {
         let i = Math.floor((tElapsed * this.count) / this.time);
-        if (this.hasOrientation && orientation === orientationEnum.right > 0) {
+        if (this.hasOrientation && orientation === orientationEnum.right) {
             i += this.count;
         }
         return this.images[i].name;
@@ -177,18 +196,22 @@ class AnimationModel {
 // Scene objects
 
 class EntityScene {
-    constructor(model, position) {
+    constructor(model, position, level) {
         this.modelName = model.name;
-        this.imageName = model.isAnimated
-            ? model.animations[animationEnum.idle].getImageName(0, orientationEnum.right)
-            : model.imageName;
-        this.position = position;
+        if (model.isAnimated) {
+            const anim = model.getAnimation(animationEnum.idle, level);
+            this.imageName = anim.getImageName(0, orientationEnum.right);
+        }
+        else {
+            this.imageName = model.imageName;
+        }
+        this.position = {x: position.x, y: position.y};
     }
 }
 
 class DecorScene {
     constructor(position, imageName, hasBody) {
-        this.position = position;
+        this.position = {x: position.x, y: position.y};
         this.imageName = imageName;
         this.hasBody = hasBody;
     }
