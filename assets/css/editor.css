@@ -10,8 +10,10 @@ main#container{
   position: fixed;
   width: 100%;
   height: calc(100% - 60px);
-  background: #fff url('../test_bg.jpg');
-  background-size: cover;
+  background: #fff url('../wallpaper.jpg');
+  background-size: 500px 500px;
+  /*background-color: #00ffff;*/
+  
   top: 60px;
   left: 0px;
 }
@@ -57,13 +59,22 @@ nav li a{
   font-size: 40px;
 }
 
+#phaser{
+
+  position: absolute;
+
+  width: 100%;
+  height: 100%;
+  z-index:2;
+}
+
 #grid{
   position: absolute;
 
   width: 100%;
   height: 100%;
   z-index:1;
-  background: rgba(255,255,255,0.4);
+  background: rgba(255,255,255,0.6);
 
   /*width: 100%;
   height: calc(100% - 60px);
@@ -78,10 +89,12 @@ nav li a{
   margin-bottom: -4px;
 }
 #grid .row div{
-  border: 1px solid #fff;
+   box-shadow: inset 1px 1px 0px #ecf0f1,inset -1px 1px 0px #ecf0f1,inset 1px -1px 0px #ecf0f1,inset -1px -1px 0px #ecf0f1;
   display:inline-block;
-  margin-right: -1px;
-  margin-top: -1px;
+}
+
+#bricks div{
+  margin-bottom: 20px;
 }
 
 
@@ -155,6 +168,7 @@ section .toggle_section{
   width: 93.3px;
   height: 93.3px;
   display: block;
+  font-size: 30px;
   transition-duration: 0.5s;
   background-color: transparent;
   border: none;
@@ -175,6 +189,7 @@ section.open .toggle_section{
   width: 100%;
   line-height: 40px;
   height: 40px;
+  font-size: 20px;
   margin: 0 auto;
 }
 section article{
@@ -182,14 +197,15 @@ section article{
 }
 section p{
   font-size:0;
-  margin-bottom: 30px;
+  margin-bottom: 20px;
 }
 section b{
   display: block;
   margin-bottom: 5px;
   font-size: 12px;
 }
-section input[type="text"]{
+section input[type="text"],
+section input[type="number"]{
   display: block;
   padding: 5px;
   border: 1px solid #eee;
@@ -198,12 +214,14 @@ section input[type="text"]{
   border-radius: 4px;
   outline: none;
 }
-section input[type="text"].with_value{
+section input[type="text"].with_value,
+section input[type="number"].with_value{
   width:calc(100% - 20px);
   margin-right: 5px;
   display: inline-block;
 }
-section input[type="text"].with_value + span{
+section input[type="text"].with_value + span,
+section input[type="number"].with_value + span{
   width:15px;
   display: inline-block;
   line-height:25px;
@@ -224,6 +242,11 @@ section select{
   height: 30px;
 }
 
-
+article p b span{
+  display: block;
+  font-size:11px;
+  font-weight: normal;
+  font-style: italic;
+}
 
 

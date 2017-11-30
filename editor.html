@@ -8,6 +8,11 @@
         <link rel="stylesheet" href="http://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
     </head>
     <body>
+<!-- <audio id="music_player" style="display: none;" autoplay loop> -->
+<audio id="music_player" style="display: none;"  loop>
+  <source src="assets/music/music.mp3" type="audio/ogg">
+Your browser does not support the audio element.
+</audio>
 
             
         <!-- 
@@ -20,7 +25,7 @@
                     Home screen
                 </li>
                 <li id="toggle_sound">
-                    <span class="ion-ios-volume-low"></span> 
+                    <span class="ion-ios-volume-high"></span> 
                     Music on/off 
                 </li>
                 <li id="export">
@@ -37,7 +42,14 @@
                Grid
             -->
             <div id="grid">
+
             </div>
+
+            <div id="phaser">
+
+
+            </div>
+
 
             <!-- 
                 Where the options are
@@ -48,26 +60,60 @@
                 <!-- 
                     Options per cartegories
                 -->
-                <section>
+                <section id="DecorScene">
                     <!-- 
                         Open category
                     -->
                     <button class="toggle_section">
-                        X
+                        <span class="ion-hammer"></span>
                     </button>
                     <!-- 
                         Content
                     -->
                     <article>
+                        <!--
+                            GRID
+                        -->
+                        <h3>Grid</h3>
                         <p>
-                            <b><label for="#">Label</label></b>
-                            <input type="text" name="#" id="">
-                        </p>
-                        <p>
-                            <b><label for="#">Label</label></b>
-                            <input type="text" name="#" id="" class="with_value">
+                            <b><label for="gridSizeNum">Grid Size</label><span>Block size</span></b>
+                            <input type="number" name="gridSizeNum" value="64" id="gridSizeNum" class="with_value">
                             <span>px</span>
                         </p>
+                        <p>
+                            <b><label for="gridRows">Grid Rows</label></b>
+                            <input type="number" name="gridRows" value="5" id="gridRows">
+                        </p>
+                        <p>
+                            <b><label for="gridCols">Grid Columns</label></b>
+                            <input type="number" name="gridCols" value="3" id="gridCols">
+                        </p>
+
+                        <!--
+                            DECORS
+                        -->
+                        <h3>Decor</h3>
+                        <div id="bricks">
+                            <div>
+                                <a id="add_more_bricks"> <img src="assets/bricks.png" alt="" /></a>
+                                <a id="add_more_lava"> <img src="assets/lava.png" alt="" width="64"/></a>
+                               
+                                <!--
+                                    <p>
+                                        <b><label for="imgName">Image Name</label></b>
+                                        <input type="number" name="imgName" id="imgName">
+                                    </p>
+                                    <p>
+                                        <b><label for="brickPositionX">Position X</label></b>
+                                        <input type="number" name="brickPositionX" id="brickPositionX">
+                                    </p>
+                                    <p>
+                                        <b><label for="brickPositionY">Position Y</label></b>
+                                        <input type="number" name="brickPositionY" id="brickPositionY">
+                                    </p>
+                                -->
+                            </div>
+                        </div>
                         <p>
                             <b>Main label</b>
                             <input type="checkbox" name="cbx" value="0"> <label for="#">Label #1</label>
@@ -105,9 +151,8 @@
 
 
         </main>
-
-        <script src="node_modules/phaser-ce/build/phaser.min.js" type="text/javascript"></script>
         <script src="node_modules/jquery/dist/jquery.min.js" type="text/javascript"></script>
+        <script src="node_modules/phaser-ce/build/phaser.min.js" type="text/javascript"></script>
         <script src="src/commons.js" type="text/javascript"></script>
         <script src="src/editor.js" type="text/javascript"></script>
     </body>
