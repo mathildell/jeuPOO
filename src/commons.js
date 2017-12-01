@@ -128,7 +128,6 @@ class EntityModel {
         this.collisionType = hitboxEnum.physical;
         this.collisionDamages = 0;
         this.collisionTags = [];
-
     }
     copy(name) {
         const model = new EntityModel(name);
