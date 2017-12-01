@@ -130,13 +130,14 @@ var tapHandler = function(sprite, pointer) {
 $('#toggle_sound').click(function(e){
   e.preventDefault();
   var musicPlayer = document.getElementById('music_player');
-  if($('#toggle_sound').hasClass('off')){
-   musicPlayer.play();
-   $('#toggle_sound').removeClass('off');
+
+  if($('span', this).hasClass('ion-ios-volume-high')){
+    $('span', this).attr({'class' : 'ion-ios-volume-low'});
+    musicPlayer.pause();
   }else{
-    musicPlayer.pause()
-    $('#toggle_sound').addClass('off');
+    $('span', this).attr({'class' : 'ion-ios-volume-high'});musicPlayer.play();
   }
+
 });
 
   //load grid
@@ -229,14 +230,6 @@ $('#toggle_sound').click(function(e){
       $(this).text("close").parent().removeClass('closed');
     }else{
       $(this).text("open").parent().addClass('closed');
-    }
-  });
-
-  $('#toggle_sound').click(function(){
-    if($('span', this).hasClass('ion-ios-volume-high')){
-      $('span', this).attr({'class' : 'ion-ios-volume-low'});
-    }else{
-      $('span', this).attr({'class' : 'ion-ios-volume-high'});
     }
   });
 

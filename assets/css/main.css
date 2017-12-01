@@ -1,0 +1,112 @@
+body, input, button{
+  font: 12px/1.3 'Arial', serif;
+}
+body{
+  background: #fff url('../wallpaper.jpg');
+  background-size: 500px 500px;
+}
+section{
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  top:0px;
+  left:0px;
+  background-color: rgba(255,255,255,0.8);
+}
+article{
+  width: 400px;
+  position:fixed;
+  top: 50%;
+  left: 50%;
+  background-color: #fff;
+  padding: 50px 100px  70px;
+  border-radius: 40px;
+  transform: translate(-50%, -50%);
+}
+img{
+  display: block;
+  width: 150px;
+  margin: 0 auto 20px;
+}
+article ul{
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+article li{
+  padding: 0px;
+}
+a{
+  color: #000;
+  text-decoration: none;
+}
+article li a{
+  display: block;
+  background-color: orange;
+  color: #fff;
+  text-align: center;
+  line-height: 35px;
+  font-size: 17px;
+  border-radius: 5px;
+
+}
+article li:first-child{
+  margin-bottom: 20px;
+}
+article li:last-child{
+  margin-top: 10px;
+}
+article li b{
+  display: block;
+  width: 100%;
+  height: 1px;
+  margin: 0 auto;
+  background-color: #ccc;
+  margin-bottom: 20px;
+}
+article li a[disabled]{
+  background-color: gray;
+  color: #ccc;
+}article li a[disabled]:hover{
+  cursor: not-allowed!important;
+}
+nav{
+  position: fixed;
+  background-color: #fff;
+  width: 100%;
+  top: 0px;
+  left: 0px;
+  z-index: 1;
+}
+nav ul{
+  list-style-type: none;
+  display: flex;
+  margin:0;
+}
+nav li{
+  line-height: 40px;
+  text-align: center;
+  max-width: 40px;
+  max-height: 40px;
+  overflow: hidden;
+  transition-duration: 0.3s;
+  white-space: nowrap;
+  border:1px solid #eee;
+  border-radius: 2px;
+  margin:10px 20px 10px 0;
+  padding-right: 10px;
+  box-sizing:border-box;
+}
+nav li:hover{
+  max-width: 150px;
+}
+nav li span,
+nav li a{
+  display: inline-block;
+  vertical-align: middle;
+  width: 40px;
+  font-size: 25px;
+}
+#toggle_sound span{
+  font-size: 40px;
+}
