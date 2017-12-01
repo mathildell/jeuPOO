@@ -13,7 +13,7 @@
   <source src="assets/music/music.mp3" type="audio/ogg">
 Your browser does not support the audio element.
 </audio>
-
+<pre style="position: absolute; top:0px; display:block; width: 100%; height: 100%; z-index:3; background-color: red; margin: 0px; padding: 0px; display:none;"></pre>
             
         <!-- 
            General nav
@@ -65,7 +65,7 @@ Your browser does not support the audio element.
                         Open category
                     -->
                     <button class="toggle_section">
-                        <span class="ion-hammer"></span>
+                        <span class="ion-grid"></span>
                     </button>
                     <!-- 
                         Content
@@ -81,72 +81,313 @@ Your browser does not support the audio element.
                             <span>px</span>
                         </p>
                         <p>
-                            <b><label for="gridRows">Grid Rows</label></b>
-                            <input type="number" name="gridRows" value="5" id="gridRows">
+                            <b><label for="gridCols">Grid Columns</label></b>
+                            <input type="number" name="gridCols" value="10" id="gridCols">
                         </p>
                         <p>
-                            <b><label for="gridCols">Grid Columns</label></b>
-                            <input type="number" name="gridCols" value="3" id="gridCols">
+                            <b><label for="gridRows">Grid Rows</label></b>
+                            <input type="number" name="gridRows" value="7" id="gridRows">
                         </p>
 
                         <!--
                             DECORS
                         -->
                         <h3>Decor</h3>
-                        <div id="bricks">
-                            <div>
-                                <a id="add_more_bricks"> <img src="assets/bricks.png" alt="" /></a>
-                                <a id="add_more_lava"> <img src="assets/lava.png" alt="" width="64"/></a>
-                               
-                                <!--
-                                    <p>
-                                        <b><label for="imgName">Image Name</label></b>
-                                        <input type="number" name="imgName" id="imgName">
-                                    </p>
-                                    <p>
-                                        <b><label for="brickPositionX">Position X</label></b>
-                                        <input type="number" name="brickPositionX" id="brickPositionX">
-                                    </p>
-                                    <p>
-                                        <b><label for="brickPositionY">Position Y</label></b>
-                                        <input type="number" name="brickPositionY" id="brickPositionY">
-                                    </p>
-                                -->
-                            </div>
-                        </div>
-                        <p>
-                            <b>Main label</b>
-                            <input type="checkbox" name="cbx" value="0"> <label for="#">Label #1</label>
-                            <input type="checkbox" name="cbx" value="1"> <label for="#">Label #2</label>
-                            <input type="checkbox" name="cbx" value="2"> <label for="#">Label #3</label>
-                            <input type="checkbox" name="cbx" value="3"> <label for="#">Label #4</label>
-                            <input type="checkbox" name="cbx" value="4"> <label for="#">Label #5</label>
-                        </p>
-                        <p>
-                            <b>Label</b>
-                            <select name="#" id="">
-                                <option value="0">Value #1</option>
-                                <option value="1">Value #2</option>
-                                <option value="2">Value #3</option>
-                                <option value="3">Value #4</option>
+                        <div id="bricks" class="imageAlign">
+                          <div class="form-group">
+                            <a id="add_more_bricks"> <img draggable="false" src="assets/bricks.png" alt="" /></a>
+                            <small>HasBody:</small>
+                            <select>
+                              <option value="0">false</option>
+                              <option value="1" selected>true</option>
                             </select>
-                        </p>
-                        <p>
-                            <b>Main label</b>
-                            <input type="radio" name="cbx" value="0"> <label for="#">Label #1</label>
-                            <input type="radio" name="cbx" value="1"> <label for="#">Label #2</label>
-                            <input type="radio" name="cbx" value="2"> <label for="#">Label #3</label>
-                            <input type="radio" name="cbx" value="3"> <label for="#">Label #4</label>
-                            <input type="radio" name="cbx" value="4"> <label for="#">Label #5</label>
-                        </p>
-
+                          </div>
+                          <div class="form-group">
+                            <a id="add_more_mario"> <img draggable="false" src="assets/bricks2.png" alt="" /></a>
+                            <small>HasBody:</small>
+                            <select>
+                              <option value="0">false</option>
+                              <option value="1" selected>true</option>
+                            </select>
+                          </div>
+                          <div class="form-group">
+                            <a id="add_more_mario2"> <img draggable="false" src="assets/bricks3.png" alt="" /></a>
+                            <small>HasBody:</small>
+                            <select>
+                              <option value="0">false</option>
+                              <option value="1" selected>true</option>
+                            </select>
+                          </div>
+                          <!-- <div class="form-group">
+                            <a id="add_more_lava"> <img draggable="false" src="assets/lava.png" alt="" width="64"/></a>
+                            <small>HasBody:</small>
+                            <select>
+                              <option value="0">false</option>
+                              <option value="1" selected>true</option>
+                            </select>
+                          </div> -->
+                        </div>
 
                     </article>
                 </section>
+                <section id="Settings"> <button class="toggle_section"> <span class="ion-gear-b"></span> </button> <article>
+                <!--
+                    SETTINGS
+                -->
+                <h3>Settings</h3>
+                <p>
+                    <b><label for="levelName">Nom du niveau</label></b>
+                    <input type="text" name="levelName" value="Untitled" id="levelName">
+                </p>
+                <p>
+                    <b><label for="gravityFall">Gravity</label></b>
+                    <input type="number" name="gravityFall" value="1000" id="gravityFall">
+                </p>
 
-                <section> <button class="toggle_section"> X </button> <article><p> <b><label for="#">Label</label></b> <input type="text" name="#" id=""></p><p> <b><label for="#">Label</label></b> <input type="text" name="#" id="" class="with_value"> <span>px</span></p><p> <b>Main label</b> <input type="checkbox" name="cbx" value="0"> <label for="#">Label #1</label> <input type="checkbox" name="cbx" value="1"> <label for="#">Label #2</label> <input type="checkbox" name="cbx" value="2"> <label for="#">Label #3</label> <input type="checkbox" name="cbx" value="3"> <label for="#">Label #4</label> <input type="checkbox" name="cbx" value="4"> <label for="#">Label #5</label></p><p> <b>Label</b> <select name="#" id=""><option value="0">Value #1</option><option value="1">Value #2</option><option value="2">Value #3</option><option value="3">Value #4</option> </select></p><p> <b>Main label</b> <input type="radio" name="cbx" value="0"> <label for="#">Label #1</label> <input type="radio" name="cbx" value="1"> <label for="#">Label #2</label> <input type="radio" name="cbx" value="2"> <label for="#">Label #3</label> <input type="radio" name="cbx" value="3"> <label for="#">Label #4</label> <input type="radio" name="cbx" value="4"> <label for="#">Label #5</label></p></article> </section><section> <button class="toggle_section"> X </button> <article><p> <b><label for="#">Label</label></b> <input type="text" name="#" id=""></p><p> <b><label for="#">Label</label></b> <input type="text" name="#" id="" class="with_value"> <span>px</span></p><p> <b>Main label</b> <input type="checkbox" name="cbx" value="0"> <label for="#">Label #1</label> <input type="checkbox" name="cbx" value="1"> <label for="#">Label #2</label> <input type="checkbox" name="cbx" value="2"> <label for="#">Label #3</label> <input type="checkbox" name="cbx" value="3"> <label for="#">Label #4</label> <input type="checkbox" name="cbx" value="4"> <label for="#">Label #5</label></p><p> <b>Label</b> <select name="#" id=""><option value="0">Value #1</option><option value="1">Value #2</option><option value="2">Value #3</option><option value="3">Value #4</option> </select></p><p> <b>Main label</b> <input type="radio" name="cbx" value="0"> <label for="#">Label #1</label> <input type="radio" name="cbx" value="1"> <label for="#">Label #2</label> <input type="radio" name="cbx" value="2"> <label for="#">Label #3</label> <input type="radio" name="cbx" value="3"> <label for="#">Label #4</label> <input type="radio" name="cbx" value="4"> <label for="#">Label #5</label></p></article> </section><section> <button class="toggle_section"> X </button> <article><p> <b><label for="#">Label</label></b> <input type="text" name="#" id=""></p><p> <b><label for="#">Label</label></b> <input type="text" name="#" id="" class="with_value"> <span>px</span></p><p> <b>Main label</b> <input type="checkbox" name="cbx" value="0"> <label for="#">Label #1</label> <input type="checkbox" name="cbx" value="1"> <label for="#">Label #2</label> <input type="checkbox" name="cbx" value="2"> <label for="#">Label #3</label> <input type="checkbox" name="cbx" value="3"> <label for="#">Label #4</label> <input type="checkbox" name="cbx" value="4"> <label for="#">Label #5</label></p><p> <b>Label</b> <select name="#" id=""><option value="0">Value #1</option><option value="1">Value #2</option><option value="2">Value #3</option><option value="3">Value #4</option> </select></p><p> <b>Main label</b> <input type="radio" name="cbx" value="0"> <label for="#">Label #1</label> <input type="radio" name="cbx" value="1"> <label for="#">Label #2</label> <input type="radio" name="cbx" value="2"> <label for="#">Label #3</label> <input type="radio" name="cbx" value="3"> <label for="#">Label #4</label> <input type="radio" name="cbx" value="4"> <label for="#">Label #5</label></p></article> </section><section> <button class="toggle_section"> X </button> <article><p> <b><label for="#">Label</label></b> <input type="text" name="#" id=""></p><p> <b><label for="#">Label</label></b> <input type="text" name="#" id="" class="with_value"> <span>px</span></p><p> <b>Main label</b> <input type="checkbox" name="cbx" value="0"> <label for="#">Label #1</label> <input type="checkbox" name="cbx" value="1"> <label for="#">Label #2</label> <input type="checkbox" name="cbx" value="2"> <label for="#">Label #3</label> <input type="checkbox" name="cbx" value="3"> <label for="#">Label #4</label> <input type="checkbox" name="cbx" value="4"> <label for="#">Label #5</label></p><p> <b>Label</b> <select name="#" id=""><option value="0">Value #1</option><option value="1">Value #2</option><option value="2">Value #3</option><option value="3">Value #4</option> </select></p><p> <b>Main label</b> <input type="radio" name="cbx" value="0"> <label for="#">Label #1</label> <input type="radio" name="cbx" value="1"> <label for="#">Label #2</label> <input type="radio" name="cbx" value="2"> <label for="#">Label #3</label> <input type="radio" name="cbx" value="3"> <label for="#">Label #4</label> <input type="radio" name="cbx" value="4"> <label for="#">Label #5</label></p></article> </section>
+                </article></section>
+                <section id="Animation"> <button class="toggle_section"> <span class="ion-android-walk"></span> </button> <article>
+                <!--
+                    SETTINGS
+                -->
+                <h3>Animations</h3>
+                <div id="AnimsImgs" class="imageAlign">
+                  <b style="display: block;"><label>Hero</label></b>
+                  <div class="form-group">
+                    <img draggable="false" src="assets/hero/attack/right/0.png" alt="" width="64"/>
+                    <small>Name:</small>
+                    <input type="text" name="HeroAttackName" value="Attack" id="HeroAttackName">
+                    <small>Time:</small>
+                    <input type="number" name="HeroAttackTime" value="0.4" id="HeroAttackTime" class="with_value"><span>s</span>
+                  </div>
+
+                  <div class="form-group">
+                    <img draggable="false" src="assets/hero/cast/right/0.png" alt="" width="64"/>
+                    <small>Name:</small>
+                    <input type="text" name="HeroCastName" value="Cast" id="HeroCastName">
+                    <small>Time:</small>
+                    <input type="number" name="HeroCastTime" value="0.4" id="HeroCastTime" class="with_value"><span>s</span>
+                  </div>
+
+                  <div class="form-group">
+                    <img draggable="false" src="assets/hero/death/0.png" alt="" width="64"/>
+                    <small>Name:</small>
+                    <input type="text" name="HeroDeathName" value="Death" id="HeroDeathName">
+                    <small>Time:</small>
+                    <input type="number" name="HeroDeathTime" value="0.4" id="HeroDeathTime" class="with_value"><span>s</span>
+                  </div>
+
+                  <div class="form-group">
+                    <img draggable="false" src="assets/hero/idle/right/0.png" alt="" width="35"/>
+                    <small>Name:</small>
+                    <input type="text" name="HeroIdleName" value="Idle" id="HeroIdleName">
+                    <small>Time:</small>
+                    <input type="number" name="HeroIdleTime" value="0.4" id="HeroIdleTime" class="with_value"><span>s</span>
+                  </div>
+
+                  <div class="form-group">
+                    <img draggable="false" src="assets/hero/run/right/0.png" alt="" width="35"/>
+                    <small>Name:</small>
+                    <input type="text" name="HeroRunName" value="Run" id="HeroRunName">
+                    <small>Time:</small>
+                    <input type="number" name="HeroRunTime" value="0.4" id="HeroRunTime" class="with_value"><span>s</span>
+                  </div>
+
+                  <!-- CULTIST -->
+                  <b style="display: block;"><label>Cultist</label></b>
+                  <div class="form-group">
+                    <img draggable="false" src="assets/cultist/attack/right/0.png" alt="" width="64"/>
+                    <small>Name:</small>
+                    <input type="text" name="CultAttackName" value="Attack" id="CultAttackName">
+                    <small>Time:</small>
+                    <input type="number" name="CultAttackTime" value="0.4" id="CultAttackTime" class="with_value"><span>s</span>
+                  </div>
+
+                  <div class="form-group">
+                    <img draggable="false" src="assets/cultist/cast/right/0.png" alt="" width="48"/>
+                    <small>Name:</small>
+                    <input type="text" name="CultCastName" value="Cast" id="CultCastName">
+                    <small>Time:</small>
+                    <input type="number" name="CultCastTime" value="0.4" id="CultCastTime" class="with_value"><span>s</span>
+                  </div>
+
+                  <div class="form-group">
+                    <img draggable="false" src="assets/cultist/death/0.png" alt="" width="37"/>
+                    <small>Name:</small>
+                    <input type="text" name="CultDeathName" value="Death" id="CultDeathName">
+                    <small>Time:</small>
+                    <input type="number" name="CultDeathTime" value="0.4" id="CultDeathTime" class="with_value"><span>s</span>
+                  </div>
+
+                  <div class="form-group">
+                    <img draggable="false" src="assets/cultist/idle/left/0.png" alt="" width="37"/>
+                    <small>Name:</small>
+                    <input type="text" name="CultIdleName" value="Idle" id="CultIdleName">
+                    <small>Time:</small>
+                    <input type="number" name="CultIdleTime" value="0.4" id="CultIdleTime" class="with_value"><span>s</span>
+                  </div>
+
+                  <div class="form-group">
+                    <img draggable="false" src="assets/cultist/run/right/0.png" alt="" width="37"/>
+                    <small>Name:</small>
+                    <input type="text" name="CultRunName" value="Run" id="CultRunName">
+                    <small>Time:</small>
+                    <input type="number" name="CultRunTime" value="0.4" id="CultRunTime" class="with_value"><span>s</span>
+                  </div>
 
 
+                </div>
+
+                </article></section>
+                <section id="Actions"> <button class="toggle_section"> <span class="ion-wand"></span> </button> <article>
+                <!--
+                    ACTIONS
+                -->
+                <div class="actionsList">
+                  <ul>
+                  </ul>
+                </div>
+                <div class="actionsForm" id="action0">
+                  <h3>Actions</h3>
+                  <p>
+                      <b><label for="actionName">Name</label></b>
+                      <input type="text" name="actionName" id="actionName">
+                  </p>
+                  <p>
+                      <b><label for="actionType">Type</label></b>
+                      <input type="text" name="actionType" id="actionType">
+                  </p>
+                  <p>
+                      <b><label for="actionKey">Key code</label></b>
+                      <input type="text" name="actionKey" id="actionKey">
+                  </p>
+                  <p>
+                      <b><label for="whileFalling">While falling</label></b>
+                      <select name="whileFalling" id="whileFalling">
+                        <option value="0">false</option>
+                        <option value="1">true</option>
+                      </select>
+                  </p>
+                  <p>
+                      <b><label for="actionLocked">Locked</label></b>
+                      <select name="actionLocked" id="actionLocked">
+                        <option value="0">false</option>
+                        <option value="1">true</option>
+                      </select>
+                  </p>
+                  <p>
+                      <b><label for="actionCoolDown">Locked</label></b>
+                      <input type="number" name="actionCoolDown" id="actionCoolDown">
+
+                  </p>
+                  <h3>Move</h3>
+
+                  <p>
+                      <b><label for="moveShiftX">Shift X</label></b>
+                      <input type="number" name="moveShiftX" value="0" id="moveShiftX">
+                  </p>
+                  <p>
+                      <b><label for="moveShiftY">Shift Y</label></b>
+                      <input type="number" name="moveShiftY" value="0" id="moveShiftY">
+                  </p>
+                  <p>
+                      <b><label for="moveSpeedX">Move speed X </label></b>
+                      <input type="number" name="moveSpeedX" value="0.4" id="moveSpeedX" class="with_value"><span>px/s</span>
+                  </p>
+                  <p>
+                      <b><label for="moveSpeedY">Move speed Y </label></b>
+                      <input type="number" name="moveSpeedY" value="0.4" id="moveSpeedY" class="with_value"><span>px/s</span>
+                  </p>
+                </div>
+
+                <a id="addAction" class="btn btn-primary" href="#">Add action</a>
+
+                </article></section>
+                <section id="Entities"> <button class="toggle_section"> <span class="ion-cube"></span> </button> <article>
+                <!--
+                    ENTITIES
+                -->
+                <h3>Entities</h3>
+                <div class="entityList">
+                  <ul>
+                  </ul>
+                </div>
+                <b class="newEditForm" style="display: block;"><label>New</label></b>
+                <div class="entityForm" id="entity0">
+                  <div class="newForm">
+                    <p>
+                        <b><label for="entityName">Name</label></b>
+                        <input type="text" name="entityName"  id="entityName">
+                    </p>
+                  </div>
+                  <p>
+                      <b><label for="entityTag">Tag</label></b>
+                      <input type="text" name="entityTag"  id="entityTag">
+                  </p>
+                  <p>
+                      <b><label for="entityImageName">Image name</label></b>
+                      <input type="text" name="entityImageName"  id="entityImageName">
+                  </p>
+                  <p>
+                      <b><label for="entityAnimationName">Animation name</label></b>
+                      <input type="text" name="entityAnimationName"  id="entityAnimationName">
+                  </p>
+                  <p>
+                      <b><label for="entityActionName">Action name</label></b>
+                      <input type="text" name="entityActionName"  id="entityActionName">
+                  </p>
+                  <p>
+                      <b><label for="entityPV">PV Max</label></b>
+                      <input type="number" name="entityPV"  id="entityPV">
+                  </p>
+                  <p>
+                      <b><label for="entityIsAnimated">Is Animated</label></b>
+                      <select name="entityIsAnimated" id="entityIsAnimated">
+                        <option value="0">false</option>
+                        <option value="1">true</option>
+                      </select>
+                  </p>
+                  <p>
+                      <b><label for="entityIsDestructible">Is Destructible</label></b>
+                      <select name="entityIsDestructible" id="entityIsDestructible">
+                        <option value="0">false</option>
+                        <option value="1">true</option>
+                      </select>
+                  </p>
+                  <p>
+                      <b><label for="entityWidth">Width</label></b>
+                      <input type="number" name="entityWidth"  id="entityWidth">
+                  </p>
+                  <p>
+                      <b><label for="entityHeight">Height</label></b>
+                      <input type="number" name="entityHeight"  id="entityHeight">
+                  </p>
+                  <p>
+                      <b><label for="entityBounciness">Bounciness</label></b>
+                      <input type="number" name="entityBounciness"  id="entityBounciness">
+                  </p>
+                  <p>
+                      <b><label for="entityHasGravity">Has Gravity</label></b>
+                      <select name="entityHasGravity" id="entityHasGravity">
+                        <option value="0">false</option>
+                        <option value="1">true</option>
+                      </select>
+                  </p>
+                  <p>
+                      <b><label for="entityCollisionType">Collision Type</label></b>
+                      <input type="text" name="entityCollisionType"  id="entityCollisionType">
+                  </p>
+                  <p>
+                      <b><label for="entityCollisionDamages">Collision Damages</label></b>
+                      <input type="text" name="entityCollisionDamages"  id="entityCollisionDamages">
+                  </p>
+                  <p>
+                      <b><label for="entityCollisionTags">Collision Tags</label></b>
+                      <input type="text" name="entityCollisionTags"  id="entityCollisionTags">
+                  </p>
+                </div>
+                <a id="addEntity" class="btn btn-primary" href="#">Add entity</a>
+                </article></section>
+                
             </aside>
 
 

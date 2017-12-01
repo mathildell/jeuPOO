@@ -12,7 +12,7 @@ d'écrire et d'interpréter une structure JSON représentant un monde jouable.
 ### Installation
 
 Ce projet doit être installé sur un serveur local.
-Ses dépendences (notamment Phaser-CE) s'installent avec le gestionnaire de packet npm.
+Ses dépendences (notamment Phaser-CE) ont été téléchargées avec npm.
 
 ### Vue d'ensemble
 
@@ -33,7 +33,7 @@ classes "Scene" et "Model" du fichier JSON.
 
 ### Notes
 
-Le projet est en Javascript, ce qui rend le code très flexible : certaines interfaces et
+Le projet est en JavaScript (l'intéractivité avec le client-side est notemment géré par jQuery), ce qui rend le code très flexible : certaines interfaces et
 fonctionnalités sont implicites, et quelques variables sont rajoutées sur les classes de
 Phaser : par exemple, 'myEntity' dans Phaser.Sprite pour retrouver l'entité correspondante
 depuis les callback qui passent des Phaser.Sprite en paramètre.
