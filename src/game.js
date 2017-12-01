@@ -4,78 +4,80 @@
 let game;
 const actionsList = [];
 
-// ____________
-// Custom level
+// ________________________
+// Custom level (for tests)
 
-const level = new JSONLevel('sandbox');
-level.preload();
+if (!level) {
+    var level = new JSONLevel('sandbox');
+    level.preload();
+    
+    (function() {
+        level.scene.grid.decor.push(new DecorScene({x: 0, y: 0}, 'ground', true));
+        level.scene.grid.decor.push(new DecorScene({x: 1, y: 0}, 'ground', true));
+        level.scene.grid.decor.push(new DecorScene({x: 2, y: 0}, 'ground', true));
+        level.scene.grid.decor.push(new DecorScene({x: 3, y: 0}, 'ground', true));
+        level.scene.grid.decor.push(new DecorScene({x: 4, y: 0}, 'ground', true));
 
-(function() {
-    level.scene.grid.decor.push(new DecorScene({x: 0, y: 0}, 'ground', true));
-    level.scene.grid.decor.push(new DecorScene({x: 1, y: 0}, 'ground', true));
-    level.scene.grid.decor.push(new DecorScene({x: 2, y: 0}, 'ground', true));
-    level.scene.grid.decor.push(new DecorScene({x: 3, y: 0}, 'ground', true));
-    level.scene.grid.decor.push(new DecorScene({x: 4, y: 0}, 'ground', true));
+        level.scene.grid.decor.push(new DecorScene({x: 3, y: 3}, 'ground', true));
+        level.scene.grid.decor.push(new DecorScene({x: 4, y: 3}, 'ground', true));
+        level.scene.grid.decor.push(new DecorScene({x: 5, y: 3}, 'ground', true));
 
-    level.scene.grid.decor.push(new DecorScene({x: 3, y: 3}, 'ground', true));
-    level.scene.grid.decor.push(new DecorScene({x: 4, y: 3}, 'ground', true));
-    level.scene.grid.decor.push(new DecorScene({x: 5, y: 3}, 'ground', true));
+        const leftRun = new ActionModel('runLeft');
+        level.resources.actions.push(leftRun);
+        leftRun.key = Phaser.KeyCode.Q;
+        leftRun.type = actionEnum.move;
+        leftRun.shift = {x: -150, y: 0};
+        leftRun.whileFalling = true;
+        leftRun.cooldown = 0;
+        leftRun.locked = false;
 
-    const leftRun = new ActionModel('runLeft');
-    level.resources.actions.push(leftRun);
-    leftRun.key = Phaser.KeyCode.Q;
-    leftRun.type = actionEnum.move;
-    leftRun.shift = {x: -150, y: 0};
-    leftRun.whileFalling = true;
-    leftRun.cooldown = 0;
-    leftRun.locked = false;
+        const rightRun = leftRun.copy('runRight');
+        level.resources.actions.push(rightRun);
+        rightRun.key = Phaser.KeyCode.D;
+        rightRun.shift = {x: 150, y: 0};
 
-    const rightRun = leftRun.copy('runRight');
-    level.resources.actions.push(rightRun);
-    rightRun.key = Phaser.KeyCode.D;
-    rightRun.shift = {x: 150, y: 0};
+        const jump = leftRun.copy('jump');
+        level.resources.actions.push(jump);
+        jump.key = Phaser.KeyCode.SPACEBAR;
+        jump.shift = {x: 0, y: 0};
+        jump.speed = {x: 0, y: 500};
+        jump.whileFalling = false;
 
-    const jump = leftRun.copy('jump');
-    level.resources.actions.push(jump);
-    jump.key = Phaser.KeyCode.SPACEBAR;
-    jump.shift = {x: 0, y: 0};
-    jump.speed = {x: 0, y: 500};
-    jump.whileFalling = false;
+        const cultistModel = new EntityModel('cultist');
+        level.resources.entities.push(cultistModel);
+        //cultistModel.imageName = 'cultist';
+        cultistModel.animationNames.push('cultistIdle');
+        cultistModel.animationNames.push('cultistAttack');
+        cultistModel.animationNames.push('cultistCast');
+        cultistModel.animationNames.push('cultistDeath');
+        cultistModel.animationNames.push('cultistRun');
+        cultistModel.isAnimated = true;
+        cultistModel.isDestructible = false;
+        cultistModel.width = 60;
+        cultistModel.height = 95;
+        cultistModel.hitboxType = hitboxEnum.physical;
+        cultistModel.bounciness = 0;
+        cultistModel.hasGravity = true;
+        cultistModel.collisionDamages = 0;
 
-    const cultistModel = new EntityModel('cultist');
-    level.resources.entities.push(cultistModel);
-    //cultistModel.imageName = 'cultist';
-    cultistModel.animationNames.push('cultistIdle');
-    cultistModel.animationNames.push('cultistAttack');
-    cultistModel.animationNames.push('cultistCast');
-    cultistModel.animationNames.push('cultistDeath');
-    cultistModel.animationNames.push('cultistRun');
-    cultistModel.isAnimated = true;
-    cultistModel.isDestructible = false;
-    cultistModel.width = 60;
-    cultistModel.height = 95;
-    cultistModel.hitboxType = hitboxEnum.physical;
-    cultistModel.bounciness = 0;
-    cultistModel.hasGravity = true;
-    cultistModel.collisionDamages = 0;
+        const myCultistModel = cultistModel.copy('myCultist');
+        level.resources.entities.push(myCultistModel);
+        myCultistModel.actionNames.push('runLeft');
+        myCultistModel.actionNames.push('runRight');
+        myCultistModel.actionNames.push('jump');
 
-    const myCultistModel = cultistModel.copy('myCultist');
-    level.resources.entities.push(myCultistModel);
-    myCultistModel.actionNames.push('runLeft');
-    myCultistModel.actionNames.push('runRight');
-    myCultistModel.actionNames.push('jump');
+        level.scene.entities.push(new EntityScene(cultistModel, {x: 300, y: 200}, level));
+        level.scene.entities.push(new EntityScene(cultistModel, {x: 300, y: 0}, level));
+        level.scene.entities.push(new EntityScene(myCultistModel, {x: 100, y: 400}, level));
 
-    level.scene.entities.push(new EntityScene(cultistModel, {x: 300, y: 200}, level));
-    level.scene.entities.push(new EntityScene(cultistModel, {x: 300, y: 0}, level));
-    level.scene.entities.push(new EntityScene(myCultistModel, {x: 100, y: 400}, level));
-
-    level.settings.gravity = 1000;
-}());
+        level.settings.gravity = 1000;
+    }());
+}
 
 // _______________
 // In game classes
 
-class Entity { // TODO Death (remove hitbox)
+class Entity {
     constructor(sceneModel) {
         const model = level.resources.entities.find(m => m.name === sceneModel.modelName);
         this.model = model;

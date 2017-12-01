@@ -4,7 +4,6 @@
 // ____________________
 // The level descriptor
 
-// Store user image name
 class JSONLevel {
     constructor(name) {
         this.resources = {
