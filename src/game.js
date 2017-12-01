@@ -42,7 +42,6 @@ level.preload();
     jump.speed = {x: 0, y: 500};
     jump.whileFalling = false;
 
-
     const cultistModel = new EntityModel('cultist');
     level.resources.entities.push(cultistModel);
     //cultistModel.imageName = 'cultist';

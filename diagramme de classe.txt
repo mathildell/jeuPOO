@@ -1,2 +1,65 @@
 
+Vue d'ensemble :
+
+Le but principal du projet était d'avoir un éditeur et un moteur de jeu qui permettent respectivement
+d'écrire un fichier JSON et de l'interpréter pour avoir un jeu.
+
+Le projet a donc été codé en Javascript.
+
+Voici la structure du fichier JSON :
+{
+    resources: {
+        imageDecors:   [ImageModel],
+        imageEntities: [ImageModel],
+        animations:    [AnimationModel],
+        actions:       [ActionModel],
+        entities:      [EntityModel]
+    };
+    scene: {
+        grid: {
+            size:   int (pixel/case),
+            width:  int (casesCount),
+            height: int (casesCount),
+            decor:  [DecorScene]
+        },
+        entities: [EntityScene]
+    };
+    settings: {
+        name: string (projectName),
+        gravity: int (acceleration in pixel/second)
+    };
+}
+
+Les classes principales appartiennent à l'une de strois catégories suivantes :
+    Model     - Représente des modèles d'objet ou des ressources lourdes (images, animations)
+    Scene     - Représente les objets dans la scène
+    "in-game" - Représente les objets en jeu
+
+Le niveau est décrit par les classes "modèle", les classes "scène" et quelques autres variables.
+
+Les classes modèle et scène sont donc prévues pour être sérialisées en JSON. Les références aux
+modèle sont donc des chaines de caractère stockant leur nom. Nous avons donc choisi de rendre
+les noms de modèle immutable pour éviter d'avoir à rechercher leurs occurences dans le fichier
+JSON lors de leur modification.
+
+Les modèles proposent une focntion de copie qui permet de les renommer et de les copier en profondeur.
+C'est une fonction pratique pour l'utilisateur qui peut souvent souhaiter de recopier un modèle à
+l'identique : par exemple, copier coller un modèle d'action pour changer sa touche d'activation.
+
+Les objets de scène sont légers et possèdent une position (leur position dans le niveau) ainsi qu'une
+référence vers leur modèle.
+
+Enfin, les objets "in-game" ne sont pas dans le JSON ; il s'agit des objets instanciés à l'aide des
+objets de type Scene et Model et manipulés par le moteur de jeu.
+
+Les animations sont gérées par une machine à état, selon leur type.
+    - Les animations de type "idle", "run" et "fall" sont les animations par défaut. Elles ne sont pas
+      prioritaires et lorsque l'animation d'une entité est d'un de ces types, elle est interrompue dès
+      qu'une autre animation par défaut devrait être jouée.
+    - Les autres animations sont prioritaires, et, lorsqu'elles sont lancées (par une action), remplace
+      celle jouée actuellement. Les animations par défaut ne peuvent pas prendre le pas sur une de ces
+      animations, jusqu'à qu'elle soit terminée.
+
+
+
 

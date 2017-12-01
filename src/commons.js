@@ -12,7 +12,6 @@ class JSONLevel {
             imageEntities: [],
             animations: [],
             actions: [],
-            hitboxes: [],
             entities: []
         };
         this.scene = {
