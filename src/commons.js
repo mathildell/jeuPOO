@@ -236,35 +236,35 @@ class DecorScene {
 // Enumerations
 
 const actionEnum = Object.freeze({
-    move:  Symbol('move'),
-    spawn: Symbol('spawn'),
-    aoe:   Symbol('aoe'),
+    move:  'move',
+    spawn: 'spawn',
+    aoe:   'aoe',
 });
 
 const orientationEnum = Object.freeze({
-    left:  Symbol('left'),
-    right: Symbol('right'),
+    left:  'left',
+    right: 'right',
 });
 
 const hitboxEnum = Object.freeze({
-    immaterial: Symbol('immaterial'),
-    physical:   Symbol('physical')
+    immaterial: 'immaterial',
+    physical:   'physical',
 });
 
 const animationEnum = Object.freeze({
-    none:    Symbol('none'),
-    birth:   Symbol('birth'),
-    death:   Symbol('death'),
-    idle:    Symbol('idle'),
-    run:     Symbol('run'),
-    fall:    Symbol('fall'),
-    hurt:    Symbol('hurt'),
-    action1: Symbol('action1'),
-    action2: Symbol('action2'),
-    action3: Symbol('action3'),
-    action4: Symbol('action4'),
-    action5: Symbol('action5'),
-    action6: Symbol('action6'),
-    action7: Symbol('action7'),
-    action8: Symbol('action8'),
+    none:    'none',
+    birth:   'birth',
+    death:   'death',
+    idle:    'idle',
+    run:     'run',
+    fall:    'fall',
+    hurt:    'hurt',
+    action1: 'action1',
+    action2: 'action2',
+    action3: 'action3',
+    action4: 'action4',
+    action5: 'action5',
+    action6: 'action6',
+    action7: 'action7',
+    action8: 'action8',
 });
