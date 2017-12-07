@@ -5,6 +5,9 @@
         <meta charset="UTF-8" />
         <title>hello phaser</title>
         <style>
+          body{
+            margin:0px;
+          }
           .layer{
             position: fixed;
             z-index: -1;
@@ -24,7 +27,6 @@
         <script src="src/commons.js" type="text/javascript"></script>
         <script>
           var level = JSON.parse('<?=$_POST["gameCode"];?>');
-          console.log(level);
         </script>
         <script src="src/game.js" type="text/javascript"></script>
     </body>

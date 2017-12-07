@@ -45,7 +45,6 @@ if (!level) {
 
         const cultistModel = new EntityModel('cultist');
         level.resources.entities.push(cultistModel);
-        //cultistModel.imageName = 'cultist';
         cultistModel.animationNames.push('cultistIdle');
         cultistModel.animationNames.push('cultistAttack');
         cultistModel.animationNames.push('cultistCast');
@@ -73,10 +72,77 @@ if (!level) {
         level.settings.gravity = 1000;
     }());
 }else{
-
     (function(){
-            
-    });
+        const tmp = level;
+        
+        level =  new JSONLevel(tmp.settings.name);
+
+        for (let act of tmp.resources.actions){
+            const acm = new ActionModel(act.name);
+
+            acm.animType = act.animType;
+            acm.cooldown = act.cooldown;
+            acm.distance = act.distance;
+            acm.entity = act.entity;
+            acm.hitboxHeight = act.hitboxHeight;
+            acm.hitboxWidth = act.hitboxWidth;
+            acm.key = act.key;
+            acm.locked = act.locked;
+            acm.shift = act.shift;
+            acm.speed = act.speed;
+            acm.type = act.type;
+            acm.whileFalling = act.whileFalling;
+
+            level.resources.actions.push(acm);
+        }
+
+        for (let anims of tmp.resources.animations){
+            level.resources.animations.push(new AnimationModel(anims.name, anims.type, anims.time, anims.count, anims.hasOrientation, anims.folder));
+        }
+
+        for (let entits of tmp.resources.entities){
+
+            const entit = new EntityModel(entits.actionNames);
+            entit.PVMax = entits.PVMax;
+            entit.animationNames = entits.animationNames;
+            entit.bounciness = entits.bounciness;
+            entit.collisionDamages = entits.collisionDamages;
+            entit.collisionTags = entits.collisionTags;
+            entit.collisionType = entits.collisionType;
+            entit.hasGravity = entits.hasGravity;
+            entit.height = entits.height;
+            entit.width = entits.width;
+            entit.imageName = entits.imageName;
+            entit.isAnimated = entits.isAnimated;
+            entit.isDestructible = entits.isDestructible;
+            entit.tag = entits.tag;
+
+            level.resources.entities.push(entit);
+        }
+
+        for (let imgDecor of tmp.resources.imageDecors){
+            level.resources.imageDecors.push(new ImageModel(imgDecor.name, imgDecor.file));
+        }
+
+        for (let imgEnt of tmp.resources.imageEntities){
+            level.resources.imageEntities.push(new ImageModel(imgEnt.name, imgEnt.file));
+        }
+
+        for (let cube of tmp.scene.grid.decor){
+            const cube2 = {position: {x: "", y:""}};
+            cube2.position.x = cube.position.x / tmp.scene.grid.size;
+            cube2.position.y = (tmp.scene.grid.height - (cube.position.y / tmp.scene.grid.size)) - 1;
+            level.scene.grid.decor.push(new DecorScene(cube2.position, cube.imageName, cube.hasBody));
+        }
+
+        level.scene.grid.height = tmp.scene.grid.height;
+        level.scene.grid.width = tmp.scene.grid.width;
+        level.scene.grid.size = tmp.scene.grid.size;
+        level.settings.gravity = tmp.settings.gravity;
+        level.settings.name = tmp.settings.name;
+
+
+    }());
 }
 
 // _______________
@@ -284,9 +350,10 @@ window.onload = function() {
         },
         transparent: true
     });
+    console.log(game.width, level.scene.grid.size, level.scene.grid.width);
 
     function preload() {
-        for (let image of level.resources.imageDecors)   {game.load.image(image.name, image.file);}
+        for (let image of level.resources.imageDecors)   {image.load(game);}
         for (let image of level.resources.imageEntities) {image.load(game);}
             //image.load(game);
         for (let model of level.resources.animations)    {model.load(game);}
