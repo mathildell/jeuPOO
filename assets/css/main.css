@@ -15,32 +15,73 @@ section{
 }
 article{
   width: 400px;
+  height:320px;
   position:fixed;
   top: 50%;
   left: 50%;
   background-color: #fff;
-  padding: 50px 100px  70px;
+  padding: 50px 100px  0px;
   border-radius: 40px;
   transform: translate(-50%, -50%);
+  overflow:hidden;
 }
 img{
   display: block;
   width: 150px;
   margin: 0 auto 20px;
 }
-article ul{
+.content{
+  position: absolute;
+  width: 900px;
+  margin-left: 0px;
+  transition: margin-left 0.7s ease-out;
+}
+.content.pushed{
+  margin-left: -500px;
+}
+.content ul, #sendCode{
+  width: 400px;
+  float:left;
+}
+#sendCode{
+  margin-left: 100Px;
+}
+#sendCode textarea{
+  width: 100%;
+  display: block;
+  border: 1px solid orange;
+  height:120px;
+  resize:none;
+  outline: none;
+  box-sizing:border-box;
+  padding: 20px;
+  font-family:'Courier New', Courier;
+}
+#sendCode button{
+  background-color: orange;
+  color: #fff;
+  border: none;
+  outline: none;
+  padding: 7px 15px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-size: 7px;
+  margin-top: 10px;
+  float: right;
+}
+.content ul{
   margin: 0;
   padding: 0;
   list-style: none;
 }
-article li{
+.content li{
   padding: 0px;
 }
 a{
   color: #000;
   text-decoration: none;
 }
-article li a{
+.content li a{
   display: block;
   background-color: orange;
   color: #fff;
@@ -50,13 +91,13 @@ article li a{
   border-radius: 5px;
 
 }
-article li:first-child{
+.content li:first-child{
   margin-bottom: 20px;
 }
-article li:last-child{
+.content li:last-child{
   margin-top: 10px;
 }
-article li b{
+.content li b{
   display: block;
   width: 100%;
   height: 1px;
@@ -64,10 +105,10 @@ article li b{
   background-color: #ccc;
   margin-bottom: 20px;
 }
-article li a[disabled]{
+.content li a[disabled]{
   background-color: gray;
   color: #ccc;
-}article li a[disabled]:hover{
+}.content li a[disabled]:hover{
   cursor: not-allowed!important;
 }
 nav{

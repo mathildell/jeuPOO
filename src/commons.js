@@ -30,6 +30,8 @@ class JSONLevel {
 
     preload() {
         this.resources.imageDecors.push(new ImageModel('ground', 'assets/bricks.png'));
+        this.resources.imageDecors.push(new ImageModel('bricks2', 'assets/bricks2.png'));
+        this.resources.imageDecors.push(new ImageModel('bricks3', 'assets/bricks3.png'));
 
         this.resources.imageEntities.push(new ImageModel('hero', 'assets/hero.png'));
         this.resources.imageEntities.push(new ImageModel('cultist', 'assets/cultist.png'));

@@ -1,5 +1,8 @@
 $(function(){
 
+  var level = new JSONLevel("level");
+  level.preload();
+  
   var squareGrid = parseInt($('#gridSizeNum').val());
   var gW = parseInt($('#gridCols').val());
   var gH = parseInt($('#gridRows').val());
@@ -12,7 +15,7 @@ function preload() {
 
     //game.load.image('grid', 'assets/debug-grid-1920x1920.png');
 
-    game.load.image('bricks', 'assets/bricks.png');
+    game.load.image('ground', 'assets/bricks.png');
     game.load.image('lava', 'assets/lava.png');
     game.load.image('bricks2', 'assets/bricks2.png');
     game.load.image('bricks3', 'assets/bricks3.png');
@@ -74,9 +77,9 @@ function addBrick($this, img){
 }
 $('#add_more_bricks').click(function(e){
   e.preventDefault();
-  this['brick' + a] = game.add.sprite(0, 0, 'bricks');
-  this['brick' + a].hasBody = parseInt($(this).parent().find('select').val());
-  addBrick(this['brick' + a], "brick");
+  this['ground' + a] = game.add.sprite(0, 0, 'ground');
+  this['ground' + a].hasBody = parseInt($(this).parent().find('select').val());
+  addBrick(this['ground' + a], "ground");
 });
 
 
@@ -252,9 +255,13 @@ $('#toggle_sound').click(function(e){
 
 
   $('#export').click(function(){
-
-    var exportFile = {
-            ressources: {
+    level.settings.name = $('#levelName').val();
+    level.settings.gravity = parseInt($('#gravityFall').val());
+    /*
+    var level = {
+            resources: {
+              imageDecors: [],
+              imageEntities: [],
               animations: [],
               actions: [],
               entities: []
@@ -273,9 +280,10 @@ $('#toggle_sound').click(function(e){
                 gravity: parseInt($('#gravityFall').val())
             }
         };
+*/
 
         $.each(bricks, function(index, brick){
-          exportFile.scene.grid.decor.push(new DecorScene(brick.position, brick.key, brick.hasBody));
+          level.scene.grid.decor.push(new DecorScene(brick.position, brick.key, brick.hasBody));
 
         });
 
@@ -283,22 +291,20 @@ $('#toggle_sound').click(function(e){
         $(".entityList li").each(function(index, obj){
            this['list' + index] = new EntityModel($(obj).data('name'));
            entityModelFormat(this['list' + index], obj);
-           exportFile.ressources.entities.push(this['list' + index]);
+           level.resources.entities.push(this['list' + index]);
         });
 
         $(".actionsList li").each(function(index, obj){
            this['action' + index] = new ActionModel($(obj).data('name'));
            actionModelFormat(this['action' + index], obj);
-           exportFile.ressources.actions.push(this['action' + index]);
+           level.resources.actions.push(this['action' + index]);
         });
 
       //  actionModelRect = new ActionModel($('#actionName').val());
       //  actionModelFormat(actionModelRect)
-      // exportFile.ressources.actions.push(actionModelRect);
+      // level.resources.actions.push(actionModelRect);
    
-
-        console.log(exportFile);
-        $('pre').show().html(JSON.stringify(exportFile));
+        $('pre').show().html(JSON.stringify(level));
 
 
 
