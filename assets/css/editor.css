@@ -276,6 +276,7 @@ article p b span{
   font-style: italic;
 }
 #addAction,
+#addEntityScene,
 #editEntity,
 #addEntity{
   padding: 5px 10px;
@@ -284,6 +285,7 @@ article p b span{
   border-radius: 4px;
   transition-duration: 0.3s;
 }
+#addEntityScene:hover,
 #addAction:hover,
 #editEntity:hover,
 #addEntity:hover{
@@ -292,6 +294,7 @@ article p b span{
   color:#556e8e;
 }
 
+.entityScene ul,
 .entityList ul,
 .actionsList ul{
   margin: 0 0 20px 0;
@@ -299,12 +302,14 @@ article p b span{
   list-style: none;
 }
 
+.entityScene li,
 .entityList li,
 .actionsList li{
   line-height: 22px;
   clear: both;
   margin-bottom: 5px;
 }
+.entityScene li span,
 .entityList li span,
 .actionsList li span{
   display: block;

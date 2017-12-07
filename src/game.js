@@ -74,6 +74,8 @@ if (!level) {
 }else{
     (function(){
         const tmp = level;
+
+        console.log(tmp);
         
         level =  new JSONLevel(tmp.settings.name);
 
@@ -101,9 +103,9 @@ if (!level) {
         }
 
         for (let entits of tmp.resources.entities){
-
-            const entit = new EntityModel(entits.actionNames);
+            const entit = new EntityModel(entits.name);
             entit.PVMax = entits.PVMax;
+            console.log(tmp.resources.entities);
             entit.animationNames = entits.animationNames;
             entit.bounciness = entits.bounciness;
             entit.collisionDamages = entits.collisionDamages;
@@ -127,6 +129,16 @@ if (!level) {
         for (let imgEnt of tmp.resources.imageEntities){
             level.resources.imageEntities.push(new ImageModel(imgEnt.name, imgEnt.file));
         }
+
+        for (let schdsl of tmp.scene.entities){
+            console.log(schdsl);
+            //console.log(tmp.resources.entities, level.resources.entities);
+            //const jfds = tmp.resources.entities.find(m => m.name === schdsl.modelName);
+            const jfds = level.resources.entities.find(m => m.name === schdsl.modelName);
+            console.log(jfds);
+            level.scene.entities.push(new EntityScene( jfds, schdsl.position, level) );
+        }
+
 
         for (let cube of tmp.scene.grid.decor){
             const cube2 = {position: {x: "", y:""}};
@@ -157,6 +169,7 @@ class Entity {
         this.sprite.anchor.setTo(0.5, 1);
         this.oldX = this.sprite.position.x;
         this.orientation = orientationEnum.right;
+        console.log(level.resources.entities);
 
         if (model.isDestructible) {
             const PVs = model.PVMax;
@@ -350,7 +363,6 @@ window.onload = function() {
         },
         transparent: true
     });
-    console.log(game.width, level.scene.grid.size, level.scene.grid.width);
 
     function preload() {
         for (let image of level.resources.imageDecors)   {image.load(game);}
@@ -410,7 +422,7 @@ window.onload = function() {
                 gCollides.add(entity.sprite);
             }
             else {
-                window.alert("BUG: Entity collision type has wrong value");
+               console.error("BUG: Entity collision type has wrong value");
             }
             entities.push(entity);
         }

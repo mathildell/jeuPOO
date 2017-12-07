@@ -2,7 +2,7 @@ $(function(){
 
   var level = new JSONLevel("level");
   level.preload();
-  
+
   var squareGrid = parseInt($('#gridSizeNum').val());
   var gW = parseInt($('#gridCols').val());
   var gH = parseInt($('#gridRows').val());
@@ -145,6 +145,20 @@ $('#toggle_sound').click(function(e){
 
   //load grid
   // for 70 / 70
+  $('#addEntityScene').click(function(e){
+    e.preventDefault();
+
+    var curr = $('.entitySceneForm').attr('id').match(/\d+/)[0], next = parseInt(curr) + 1;
+
+    $('.entityScene ul').append('<li data-entity="'+curr+'" data-entitymodelname="'+$('#entityModelName').val()+'" data-posx="'+$('#entitySposx').val()+'" data-posy="'+$('#entitySposy').val()+'"><i>'+$('#entityModelName').val()+'</i> <span class="ion-trash-a" id="deleteEdit'+curr+'"></span></li>');
+
+    $('.entitySceneForm').attr({'id':"sceneEntity"+next});
+
+    $.each($('.entityForm input'), function(){
+      $(this).val("");
+    });
+
+  });
   $('#addEntity').click(function(e){
     e.preventDefault();
 
@@ -152,7 +166,9 @@ $('#toggle_sound').click(function(e){
 
     $('.entityList ul').append('<li data-entity="'+curr+'" data-name="'+$('#entityName').val()+'" data-tag="'+$('#entityTag').val()+'" data-imagename="'+$('#entityImageName').val()+'" data-animationname="'+$('#entityAnimationName').val()+'" data-actionname="'+$('#entityActionName').val()+'" data-pv="'+$('#entityPV').val()+'" data-isanimated="'+$('#entityIsAnimated').val()+'" data-isdestructible="'+$('#entityIsDestructible').val()+'" data-width="'+$('#entityWidth').val()+'" data-height="'+$('#entityHeight').val()+'" data-bounciness="'+$('#entityBounciness').val()+'" data-hasgravity="'+$('#entityHasGravity').val()+'" data-collisiontype="'+$('#entityCollisionType').val()+'" data-collisiondamages="'+$('#entityCollisionDamages').val()+'" data-collisiontags="'+$('#entityCollisionTags').val()+'"><i>'+$('.entityForm #entityName').val()+'</i> <span class="ion-trash-a" id="deleteEdit'+curr+'"></span></li>');
 
-    $('.entityForm').attr({'id':next});
+    $('#entityModelName').val( $('#entityName').val() );
+
+    $('.entityForm').attr({'id':"entity"+next});
 
     $.each($('.entityForm input'), function(){
       $(this).val("");
@@ -160,7 +176,7 @@ $('#toggle_sound').click(function(e){
 
   });
 
-  $(".entityList").on("click", "li [id^=deleteEdit]", function(){
+  $(".entityList, .entityScene").on("click", "li [id^=deleteEdit]", function(){
 
     $(this).parent().remove();
 
@@ -281,12 +297,17 @@ $('#toggle_sound').click(function(e){
             }
         };
 */
-
         $.each(bricks, function(index, brick){
           level.scene.grid.decor.push(new DecorScene(brick.position, brick.key, brick.hasBody));
 
         });
 
+
+        $(".entityScene li").each(function(index, obj){
+           this['scen' + index] = new EntityScene({name: $(obj).data('entitymodelname')}, {x: parseInt($(obj).data('posx')), y: parseInt($(obj).data('posy'))});
+           level.scene.entities.push(this['scen' + index]);
+           console.log(level.scene.entities);
+        });
 
         $(".entityList li").each(function(index, obj){
            this['list' + index] = new EntityModel($(obj).data('name'));
@@ -323,7 +344,17 @@ $('#toggle_sound').click(function(e){
   function entityModelFormat($this, list){
     $this.tag = $(list).data('tag');
     $this.imageName = $(list).data('imagename');
-    $this.animationNames = $(list).data('animationname');
+    table = $(list).data('animationname').split(",");
+
+    console.log(table);
+    for (var i = 0; i < table.length; i++) {
+        $this.animationNames.push(table[i].trim());
+        //Do something
+    }
+
+    // table.each(function(i, obj){
+    //   $this.animationNames.push($(obj).toString().trim());
+    // });
     $this.actionNames = $(list).data('actionname');
     $this.PVMax = $(list).data('pv');
     $this.isAnimated = !!+$(list).data('isanimated');
