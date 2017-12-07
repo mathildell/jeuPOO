@@ -72,6 +72,11 @@ if (!level) {
 
         level.settings.gravity = 1000;
     }());
+}else{
+
+    (function(){
+            
+    });
 }
 
 // _______________
@@ -276,12 +281,14 @@ window.onload = function() {
             preload: preload,
             create:  create,
             update:  update
-        }
+        },
+        transparent: true
     });
 
     function preload() {
-        for (let image of level.resources.imageDecors)   {image.load(game);}
+        for (let image of level.resources.imageDecors)   {game.load.image(image.name, image.file);}
         for (let image of level.resources.imageEntities) {image.load(game);}
+            //image.load(game);
         for (let model of level.resources.animations)    {model.load(game);}
     }
 

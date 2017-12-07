@@ -30,12 +30,18 @@ Your browser does not support the audio element.
     <section>
       <article>
         <img src="assets/logo.png" class="logo">
-        <ul>
-          <li><a href="#" disabled>Load game</a></li>
-          <li><b></b></li>
-          <li><a href="#" disabled>Edit existing game</a></li>
-          <li><a href="editor.html">Start new level</a></li>
-        </ul>
+        <div class="content">
+          <ul>
+            <li><a href="#" id="loadGame">Load game</a></li>
+            <li><b></b></li>
+            <li><a href="#" disabled>Edit existing game</a></li>
+            <li><a href="editor.html">Start new level</a></li>
+          </ul>
+          <form action="game.php" method="POST" id="sendCode">
+            <textarea name="gameCode" placeholder="Paste your generated code here"></textarea>
+            <button type="submit">submit</button>
+          </form>
+        </div>
       </article>
     </section>
   </body>
@@ -57,6 +63,19 @@ $('#toggle_sound').click(function(e){
   }
 
 });
+   
+  $('#loadGame').click(function(e){
+    e.preventDefault();
+    $('.content').addClass('pushed');
+  });
+
+  $('#sendCode').submit(function(e){
+    //e.preventDefault();
+    //console.log(JSON.parse($('#sendCode textarea').val()));
+  });
 
   </script>
 </html>
+
+
+
