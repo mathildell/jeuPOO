@@ -88,7 +88,7 @@ if (!level) {
             acm.entity = act.entity;
             acm.hitboxHeight = act.hitboxHeight;
             acm.hitboxWidth = act.hitboxWidth;
-            acm.key = act.key;
+            acm.key = act.key === "Space" ? 32 : act.key.charCodeAt(0);
             acm.locked = act.locked;
             acm.shift = act.shift;
             acm.speed = act.speed;
@@ -107,6 +107,7 @@ if (!level) {
             entit.PVMax = entits.PVMax;
             console.log(tmp.resources.entities);
             entit.animationNames = entits.animationNames;
+            entit.actionNames = entits.actionNames;
             entit.bounciness = entits.bounciness;
             entit.collisionDamages = entits.collisionDamages;
             entit.collisionTags = entits.collisionTags;
