@@ -39,6 +39,7 @@ function generateGrid(squareGrid, gW, gH){
 
 generateGrid(squareGrid, gW, gH);
 
+
 $('#gridCols, #gridRows, #gridSizeNum').change(function(){
   squareGrid = parseInt($('#gridSizeNum').val());
   gW = parseInt($('#gridCols').val());
@@ -49,8 +50,6 @@ $('#gridCols, #gridRows, #gridSizeNum').change(function(){
   game.scale.setGameSize((gW*squareGrid), (gH*squareGrid));
   generateGrid(squareGrid, gW, gH);
   $.each(bricks, function(index, brick){
-    //ratio = (squareGrid / brick.width) ;
-    //brick.scale.setTo(ratio,ratio);
     brick.width = squareGrid;
     brick.height = squareGrid;
     brick.input.enableSnap(squareGrid, squareGrid, true, true);
@@ -79,6 +78,7 @@ $('#add_more_bricks').click(function(e){
   e.preventDefault();
   this['ground' + a] = game.add.sprite(0, 0, 'ground');
   this['ground' + a].hasBody = parseInt($(this).parent().find('select').val());
+  console.log(this['ground' + a].hasBody);
   addBrick(this['ground' + a], "ground");
 });
 
@@ -176,11 +176,59 @@ $('#toggle_sound').click(function(e){
 
   });
 
-  $(".entityList, .entityScene").on("click", "li [id^=deleteEdit]", function(){
+  $(".entityList, .entityScene").on("click", "li span[id^=deleteEdit]", function(){
 
     $(this).parent().remove();
 
   });
+
+  $(".entityScene").on("click", "li span[id^=editEdit]", function(){
+    $('#entityModelName').val($(this).parent().data('entitymodelname'));
+    $('#entitySposx').val($(this).parent().data('posx'));
+    $('#entitySposy').val($(this).parent().data('posy'));
+
+  });
+
+
+  $(".actionsList").on("click", "li span[id^=editEdit]", function(){
+    console.log($(this).data('name'));
+    //$(this).parent().remove();
+    $('#actionName').val($(this).parent().data('name'));
+    $('#actionType').val($(this).parent().data('type'));
+    $('#actionKey').val($(this).parent().data('key'));
+    $('#whileFalling').val($(this).parent().data('whilefalling'));
+    $('#actionLocked').val($(this).parent().data('locked'));
+    $('#actionCoolDown').val($(this).parent().data('cooldown'));
+    $('#moveShiftX').val($(this).parent().data('moveshiftx'));
+    $('#moveShiftY').val($(this).parent().data('moveshifty'));
+    $('#moveSpeedX').val($(this).parent().data('movespeedx'));
+    $('#moveSpeedY').val($(this).parent().data('movespeedy'));
+
+  });
+
+  $('.entityList').on("click", "li span[id^=editEdit]", function(){
+    
+    //$(this).parent().remove();
+    $('#entityName').val($(this).parent().data('name'));
+    $('#entityTag').val($(this).parent().data('tag'));
+    $('#entityImageName').val($(this).parent().data('imagename'));
+    $('#entityAnimationName').val($(this).parent().data('animationname'));
+    $('#entityActionName').val($(this).parent().data('actionname'));
+    $('#entityPV').val($(this).parent().data('pv'));
+    $('#entityIsAnimated').val($(this).parent().data('isanimated'));
+    $('#entityIsDestructible').val($(this).parent().data('isdestructible'));
+    $('#entityWidth').val($(this).parent().data('width'));
+    $('#entityHeight').val($(this).parent().data('height'));
+    $('#entityBounciness').val($(this).parent().data('bounciness'));
+
+    $('#entityHasGravity').val($(this).parent().data('hasgravity'));
+    $('#entityCollisionType').val($(this).parent().data('collisiontype'));
+    $('#entityCollisionDamages').val($(this).parent().data('collisiondamages'));
+    $('#entityCollisionTags').val($(this).parent().data('collisiontags'));
+
+  });
+
+
 
    $('#addAction').click(function(e){
     e.preventDefault();
@@ -365,7 +413,11 @@ $('#toggle_sound').click(function(e){
     $this.hasGravity = !!+$(list).data('hasgravity');
     $this.collisionType = $(list).data('collisiontype');
     $this.collisionDamages = $(list).data('collisiondamages');
-    $this.collisionTags = $(list).data('collisiontags');
+    if($(list).data('collisiontags').trim().length <= 0){
+      $this.collisionTags = [];
+    }else{
+      $this.collisionTags = $(list).data('collisiontags');
+    }
   }
 });
 

@@ -105,7 +105,6 @@ if (!level) {
         for (let entits of tmp.resources.entities){
             const entit = new EntityModel(entits.name);
             entit.PVMax = entits.PVMax;
-            console.log(tmp.resources.entities);
             entit.animationNames = entits.animationNames;
             entit.actionNames = entits.actionNames;
             entit.bounciness = entits.bounciness;
@@ -132,11 +131,7 @@ if (!level) {
         }
 
         for (let schdsl of tmp.scene.entities){
-            console.log(schdsl);
-            //console.log(tmp.resources.entities, level.resources.entities);
-            //const jfds = tmp.resources.entities.find(m => m.name === schdsl.modelName);
             const jfds = level.resources.entities.find(m => m.name === schdsl.modelName);
-            console.log(jfds);
             level.scene.entities.push(new EntityScene( jfds, schdsl.position, level) );
         }
 
@@ -170,7 +165,6 @@ class Entity {
         this.sprite.anchor.setTo(0.5, 1);
         this.oldX = this.sprite.position.x;
         this.orientation = orientationEnum.right;
-        console.log(level.resources.entities);
 
         if (model.isDestructible) {
             const PVs = model.PVMax;
@@ -213,10 +207,18 @@ class Entity {
         this.actions = [];
         if (!model.actions) {
             model.actions = [];
-            for (let name of model.actionNames) {
-                const actionModel = level.resources.actions.find(m => m.name === name);
+            let table = model.actionNames.split(",");
+
+            for (let i = 0; i < table.length; i++) {
+                //$this.animationNames.push(table[i].trim());
+                const actionModel = level.resources.actions.find(m => m.name === table[i].trim());
                 model.actions.push(actionModel);
+                //Do something
             }
+            // for (let name of model.actionNames.split(",")) {
+            //     const actionModel = level.resources.actions.find(m => m.name === name);
+            //     model.actions.push(actionModel);
+            // }
         }
         for (const actionModel of model.actions) {
             this.actions.push(new Action(actionModel, this));
@@ -249,7 +251,6 @@ class Entity {
         else if (this.isMoving > 0) {
             type = animationEnum.run;
         }
-        console.log(type.toString());
         return type;
     }
     _updateAnimation(delta) {
@@ -304,6 +305,7 @@ class Animation {
 
 class Action {
     constructor(model, entity) {
+        //console.log(model);
         this.model = model;
         this.entity = entity;
         this.CD = 0;
@@ -348,9 +350,8 @@ class Action {
     }
 }
 
-
 window.onload = function() {
-
+    
     game = new Phaser.Game({
         width:        level.scene.grid.size * level.scene.grid.width,
         height:       level.scene.grid.size * level.scene.grid.height,
@@ -364,6 +365,10 @@ window.onload = function() {
         },
         transparent: true
     });
+
+    //game = new Phaser.Game(level.scene.grid.size * level.scene.grid.width, level.scene.grid.size * level.scene.grid.height, Phaser.AUTO,'phaser', { preload: preload, create: create }, true);
+    
+    console.log(level.scene.grid.size, level.scene.grid.width, level.scene.grid.height);
 
     function preload() {
         for (let image of level.resources.imageDecors)   {image.load(game);}
@@ -420,6 +425,7 @@ window.onload = function() {
                 gOverlaps.add(entity.sprite);
             }
             else if (collision === hitboxEnum.physical) {
+                //window.alert("c e");
                 gCollides.add(entity.sprite);
             }
             else {
